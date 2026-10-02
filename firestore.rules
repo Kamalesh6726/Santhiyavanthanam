@@ -1,0 +1,110 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function: Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function: Check if the user is accessing their own document
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    // Helper function: Check if user is a member of the circle
+    function isCircleMember(circleId) {
+      return isAuthenticated() && exists(/databases/$(database)/documents/circles/$(circleId)/members/$(request.auth.uid));
+    }
+
+    // USERS COLLECTION
+    match /users/{userId} {
+      // Users can read their own profile, or other profiles if they are in the same circle (would require complex rule or denormalization, for now allow read if authenticated to see friend profiles)
+      allow read: if isAuthenticated();
+      // Users can only create/update their own profile
+      allow create: if isOwner(userId);
+      // Users can update their own profile, but cannot arbitrarily modify streaks from client
+      // (In a true production app, streaks would be calculated via Cloud Functions. 
+      // For this implementation, we will allow client updates but validate fields if needed)
+      allow update: if isOwner(userId);
+      
+      // SESSIONS SUBCOLLECTION
+      match /sessions/{sessionId} {
+        // Users can read their own sessions, and others can read if they are friends (allow read for authenticated for now)
+        allow read: if isAuthenticated();
+        // Users can only write their own sessions
+        allow create, update, delete: if isOwner(userId);
+      }
+      
+      // NOTIFICATIONS SUBCOLLECTION
+      match /notifications/{notificationId} {
+        allow read: if isOwner(userId);
+        // Anyone authenticated can create a notification for someone else (e.g., when joining)
+        allow create: if isAuthenticated();
+        allow update, delete: if isOwner(userId);
+      }
+    }
+
+    // CIRCLES COLLECTION
+    match /circles/{circleId} {
+      // Any authenticated user can read a circle (needed for previewing before joining)
+      allow read: if isAuthenticated();
+      // Only authenticated users can create circles
+      allow create: if isAuthenticated();
+      // Only members can update the circle
+      allow update: if isCircleMember(circleId);
+
+      // CIRCLE MEMBERS SUBCOLLECTION
+      match /members/{memberId} {
+        // Anyone in the circle can read members
+        allow read: if isCircleMember(circleId) || memberId == request.auth.uid;
+        // A user can add themselves to a circle (join via invite)
+        allow create: if isAuthenticated() && memberId == request.auth.uid;
+        // Only the member themselves can update their own status (or an admin, but keeping it simple)
+        allow update, delete: if memberId == request.auth.uid;
+      }
+
+      // DAILY PROGRESS — Circle-visible, not private
+      match /dailyProgress/{progressId} {
+        allow read: if isCircleMember(circleId);
+        allow create, update: if isAuthenticated();
+      }
+
+      // ACTIVITY FEED — Circle-visible
+      match /activity/{activityId} {
+        allow read: if isCircleMember(circleId);
+        allow create: if isAuthenticated();
+      }
+    }
+
+    // CIRCLE SETTINGS COLLECTION (GLOBAL CONFIG)
+    match /circleSettings/{settingId} {
+      // Anyone authenticated can read global settings
+      allow read: if isAuthenticated();
+      // Allow creation of global config if it doesn't exist, but don't allow modifying it arbitrarily
+      allow create: if isAuthenticated() && settingId == 'global';
+      // Only allow updates from a trusted backend, or keep it strict. 
+      // For now, no client can modify the global join code once it's created.
+      allow update, delete: if false;
+    }
+    
+    // CHALLENGES COLLECTION
+    match /challenges/{challengeId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated();
+      
+      match /members/{memberId} {
+        allow read: if isAuthenticated();
+        allow create, update, delete: if memberId == request.auth.uid;
+      }
+
+      // CHALLENGE PARTICIPANTS
+      match /participants/{participantId} {
+        allow read: if isAuthenticated();
+        allow create, update: if isAuthenticated() && participantId == request.auth.uid;
+      }
+    }
+  }
+}
