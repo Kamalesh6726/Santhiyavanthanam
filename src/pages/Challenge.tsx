@@ -5,7 +5,8 @@ import { Target, CalendarDays, ArrowRight, X, Flame, Trophy, Clock } from 'lucid
 import { useChallenges, useMyCircle } from '../hooks/useFirebaseData';
 import { useAuth } from '../store/AuthContext';
 import { createChallenge } from '../lib/db';
-import { format, differenceInDays, parseISO } from 'date-fns';
+import { differenceInDays } from 'date-fns';
+import { toValidDate, safeFormat } from '../lib/utils';
 
 // ─── Challenge Detail Sheet ───────────────────────────────────────────────────
 const ChallengeDetail = ({
@@ -15,13 +16,13 @@ const ChallengeDetail = ({
   challenge: any;
   onClose: () => void;
 }) => {
-  const startDate = challenge.startDate ? parseISO(challenge.startDate) : new Date();
-  const endDate = challenge.endDate ? parseISO(challenge.endDate) : new Date();
+  const startDate = toValidDate(challenge?.startDate);
+  const endDate = toValidDate(challenge?.endDate, new Date(startDate.getTime() + 30 * 24 * 60 * 60 * 1000));
   const today = new Date();
-  const daysPassed = Math.max(0, differenceInDays(today, startDate) + 1);
-  const totalDays = challenge.duration || 30;
+  const daysPassed = Math.max(1, Math.min(30, differenceInDays(today, startDate) + 1));
+  const totalDays = challenge?.duration || 30;
   const daysLeft = Math.max(0, differenceInDays(endDate, today));
-  const progress = Math.min(100, Math.round((daysPassed / totalDays) * 100));
+  const progress = Math.min(100, Math.max(0, Math.round((daysPassed / totalDays) * 100)));
 
   return (
     <AnimatePresence>
@@ -100,7 +101,7 @@ const ChallengeDetail = ({
                   <span className="text-sm">Start Date</span>
                 </div>
                 <span className="text-sm font-semibold text-brand-charcoal dark:text-gray-100">
-                  {format(startDate, 'MMM d, yyyy')}
+                  {safeFormat(startDate, 'MMM d, yyyy')}
                 </span>
               </div>
               <div className="flex items-center justify-between py-3">
@@ -109,7 +110,7 @@ const ChallengeDetail = ({
                   <span className="text-sm">End Date</span>
                 </div>
                 <span className="text-sm font-semibold text-brand-charcoal dark:text-gray-100">
-                  {format(endDate, 'MMM d, yyyy')}
+                  {safeFormat(endDate, 'MMM d, yyyy')}
                 </span>
               </div>
             </div>
@@ -186,15 +187,15 @@ export const Challenge = () => {
 
           <div className="flex items-center text-gray-500 dark:text-gray-400 text-sm mb-6">
             <CalendarDays className="w-4 h-4 mr-2 text-brand-saffron" />
-            Started {activeChallenge.startDate ? format(parseISO(activeChallenge.startDate), 'MMM d, yyyy') : 'today'}
+            Started {safeFormat(activeChallenge.startDate, 'MMM d, yyyy', 'today')}
           </div>
 
           {/* Progress bar preview */}
           {(() => {
-            const start = activeChallenge.startDate ? parseISO(activeChallenge.startDate) : new Date();
-            const passed = Math.max(0, differenceInDays(new Date(), start) + 1);
+            const start = toValidDate(activeChallenge.startDate);
+            const passed = Math.max(1, Math.min(30, differenceInDays(new Date(), start) + 1));
             const total = activeChallenge.duration || 30;
-            const pct = Math.min(100, Math.round((passed / total) * 100));
+            const pct = Math.min(100, Math.max(0, Math.round((passed / total) * 100)));
             return (
               <div className="mb-6">
                 <div className="flex justify-between text-xs text-gray-400 mb-1.5">

@@ -7,6 +7,7 @@ import { ProgressRing } from '../components/shared/ProgressRing';
 import { SessionCard } from '../components/shared/SessionCard';
 import { WeeklyTracker } from '../components/shared/WeeklyTracker';
 import { format } from 'date-fns';
+import { safeFormat } from '../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, ArrowRight } from 'lucide-react';
 import { Card } from '../components/ui/Card';
@@ -200,7 +201,7 @@ export const Home: React.FC = () => {
                     {notif.message}
                   </p>
                   <p className="text-xs text-brand-green/80 mt-1 font-medium">
-                    {notif.createdAt ? format(notif.createdAt.toDate(), 'h:mm a') : 'Just now'}
+                    {notif.createdAt ? safeFormat(notif.createdAt, 'h:mm a', 'Just now') : 'Just now'}
                   </p>
                 </div>
               </div>

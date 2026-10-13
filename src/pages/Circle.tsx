@@ -6,6 +6,7 @@ import { useMyCircle, useCircleDailyProgress, useCircleActivity } from '../hooks
 import { createCircle, previewCircle, validateAndJoinCircle, sendReaction } from '../lib/db';
 import { Card } from '../components/ui/Card';
 import { format } from 'date-fns';
+import { safeFormat } from '../lib/utils';
 
 // ─── Bottom Sheet ─────────────────────────────────────────────────────────────
 const BottomSheet = ({ isOpen, onClose, children }: { isOpen: boolean; onClose: () => void; children: React.ReactNode }) => (
@@ -391,8 +392,8 @@ export const Circle = () => {
                   <p className="text-sm text-brand-charcoal dark:text-gray-200">
                     <span className="font-semibold">{act.name}</span> {act.message}
                   </p>
-                  {act.createdAt?.toDate && (
-                    <p className="text-xs text-gray-400 mt-0.5">{format(act.createdAt.toDate(), 'h:mm a')}</p>
+                  {act.createdAt && (
+                    <p className="text-xs text-gray-400 mt-0.5">{safeFormat(act.createdAt, 'h:mm a')}</p>
                   )}
                 </div>
               </div>
