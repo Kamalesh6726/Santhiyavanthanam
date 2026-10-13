@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { signInWithGoogle, signInWithEmail, signUpWithEmail } from '../../lib/firebase';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { motion } from 'framer-motion';
+import { useAuth } from '../../store/AuthContext';
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { currentUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
@@ -16,6 +18,12 @@ export const Login: React.FC = () => {
   const [password, setPassword] = useState('');
 
   const returnTo = location.state?.returnTo || '/';
+
+  useEffect(() => {
+    if (currentUser) {
+      navigate(returnTo, { replace: true });
+    }
+  }, [currentUser, navigate, returnTo]);
 
   const handleError = (err: any) => {
     console.error(err);

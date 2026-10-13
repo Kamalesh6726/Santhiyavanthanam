@@ -213,11 +213,12 @@ export const Challenge = () => {
 
           <button
             onClick={() => setSelectedChallenge(activeChallenge)}
-            className="w-full py-4 rounded-2xl bg-brand-charcoal dark:bg-gray-100 text-white dark:text-brand-charcoal font-bold flex items-center justify-between px-5 active:scale-95 transition-transform group"
+            className="w-full py-4 rounded-2xl bg-[#191815] hover:bg-[#2A2723] text-white dark:bg-white dark:text-[#191815] dark:hover:bg-gray-100 font-bold flex items-center justify-between px-6 shadow-md hover:shadow-lg active:scale-[0.98] transition-all group border border-transparent dark:border-gray-200"
           >
-            <span className="text-brand-saffron dark:text-brand-saffron">→</span>
-            <span>View Details</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <span className="text-sm tracking-wide font-medium">View Challenge Details</span>
+            <div className="w-8 h-8 rounded-full bg-white/10 dark:bg-black/10 flex items-center justify-center group-hover:bg-brand-saffron group-hover:text-white transition-colors">
+              <ArrowRight className="w-4 h-4 text-brand-saffron group-hover:text-white group-hover:translate-x-0.5 transition-all" />
+            </div>
           </button>
         </Card>
       ) : (

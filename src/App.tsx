@@ -14,6 +14,8 @@ import { Button } from './components/ui/Button';
 import { motion } from 'framer-motion';
 import { useAuth } from './store/AuthContext';
 
+import { ErrorBoundary } from './components/shared/ErrorBoundary';
+
 const Onboarding = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
@@ -69,26 +71,32 @@ function App() {
   }, []);
 
   return (
-    <BrowserRouter>
-      <ScrollToTop />
-      <Routes>
-        <Route path="/welcome" element={<Onboarding />} />
-        <Route path="/login" element={<Login />} />
-        
-        {/* Protected Routes - App Mode */}
-        <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<AppLayout />}>
-            <Route index element={<Home />} />
-            <Route path="challenge" element={<Challenge />} />
-            <Route path="calendar" element={<Calendar />} />
-            <Route path="circle" element={<Circle />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="wisdom" element={<WisdomPage />} />
-            <Route path="settings" element={<Settings />} />
+    <ErrorBoundary>
+      <BrowserRouter>
+        <ScrollToTop />
+        <Routes>
+          <Route path="/welcome" element={<Onboarding />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/friends" element={<Navigate to="/circle" replace />} />
+          
+          {/* Protected Routes - App Mode */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<AppLayout />}>
+              <Route index element={<Home />} />
+              <Route path="challenge" element={<Challenge />} />
+              <Route path="calendar" element={<Calendar />} />
+              <Route path="circle" element={<Circle />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="wisdom" element={<WisdomPage />} />
+              <Route path="settings" element={<Settings />} />
+            </Route>
           </Route>
-        </Route>
-      </Routes>
-    </BrowserRouter>
+
+          {/* Catch-all fallback route to prevent blank pages */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 

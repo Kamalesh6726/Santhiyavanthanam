@@ -17,6 +17,8 @@ export default {
           sand: '#E9DFCF',
           green: '#6F8C70',
           white: '#FFFFFF',
+          charcoal: '#1A1816',
+          charcoalMuted: '#2C2824',
           
           // Dark Mode
           darkBg: '#10100F',

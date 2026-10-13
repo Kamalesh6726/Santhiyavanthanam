@@ -3,7 +3,11 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../store/AuthContext';
 
 export const ProtectedRoute: React.FC = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, loading } = useAuth();
+
+  if (loading) {
+    return null;
+  }
 
   if (!currentUser) {
     return <Navigate to="/login" replace />;
