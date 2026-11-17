@@ -68,13 +68,13 @@ service cloud.firestore {
       // DAILY PROGRESS — Circle-visible, not private
       match /dailyProgress/{progressId} {
         allow read: if isCircleMember(circleId);
-        allow create, update: if isAuthenticated();
+        allow create, update, delete: if isAuthenticated();
       }
 
       // ACTIVITY FEED — Circle-visible
       match /activity/{activityId} {
         allow read: if isCircleMember(circleId);
-        allow create: if isAuthenticated();
+        allow create, delete: if isAuthenticated();
       }
     }
 

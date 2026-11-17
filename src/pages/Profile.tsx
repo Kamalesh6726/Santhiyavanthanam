@@ -8,10 +8,97 @@ import {
   MapPin, Check, Copy, X, ArrowRight
 } from 'lucide-react';
 
+// ─── Language Type ─────────────────────────────────────────────────────────────
+type Language = 'ta' | 'en' | 'sa';
+
+const PROFILE_STRINGS = {
+  ta: {
+    title: 'விவரக்குறிப்பு',
+    subtitle: 'சாதகர் விவரங்கள்',
+    badge: 'சாதகர்',
+    currentStreak: 'Current Streak',
+    totalSessions: 'Total Sessions',
+    days: 'நாட்கள்',
+    done: 'முடிந்தது',
+    basicInfoTitle: 'அடிப்படை ஆன்மீக விவரங்கள் (Basic Info)',
+    editBtn: 'திருத்துக',
+    vedaLabel: 'வேத சாகை (Veda)',
+    sutraLabel: 'ஸூத்ரம் (Sutra)',
+    gotraLabel: 'கோத்ரம் (Gotra)',
+    pravaraLabel: 'ப்ரவரம் (Pravara)',
+    locationLabel: 'இருப்பிடம் (Location)',
+    targetLabel: 'தினசரி இலக்கு (Daily Target)',
+    sessionsPerDay: 'வேளை / நாள்',
+    notSet: 'குறிப்பிடப்படவில்லை',
+    abhivadanamTitle: 'உங்கள் அபிவாதனம் (Your Abhivādaye)',
+    abhivadanamSub: 'உங்கள் கோத்ரம், ப்ரவரம் மற்றும் ஸூத்ரத்தின் அடிப்படையில் உருவானது.',
+    wisdomCardTitle: 'சந்தியா ஞானம்',
+    wisdomCardSub: 'ஆராய்ச்சி நன்மைகள் & மந்திர விளக்கம் (3 மொழிகளில்)',
+    modalTitle: 'அடிப்படை விவரங்களை உள்ளிடுக',
+    saveBtn: 'சேமிக்க (Save)',
+    savingBtn: 'சேமிக்கிறது...',
+    cancelBtn: 'ரத்து செய்க'
+  },
+  en: {
+    title: 'Profile',
+    subtitle: 'Practitioner Profile',
+    badge: 'Practitioner',
+    currentStreak: 'Current Streak',
+    totalSessions: 'Total Sessions',
+    days: 'days',
+    done: 'done',
+    basicInfoTitle: 'Basic Vedic Information',
+    editBtn: 'Edit',
+    vedaLabel: 'Veda Shakha',
+    sutraLabel: 'Sutra',
+    gotraLabel: 'Gotra',
+    pravaraLabel: 'Pravara Lineage',
+    locationLabel: 'City / Location',
+    targetLabel: 'Daily Target',
+    sessionsPerDay: 'sessions / day',
+    notSet: 'Not set yet',
+    abhivadanamTitle: 'Your Abhivādaye Chant',
+    abhivadanamSub: 'Auto-synthesized from your Gotra, Pravara, Sutra, and Veda.',
+    wisdomCardTitle: 'Sandhyā Jñānam',
+    wisdomCardSub: 'Scientific Research & Mantras (3 Languages)',
+    modalTitle: 'Edit Basic Information',
+    saveBtn: 'Save Profile',
+    savingBtn: 'Saving...',
+    cancelBtn: 'Cancel'
+  },
+  sa: {
+    title: 'व्यक्तिविवरणम्',
+    subtitle: 'साधक विवरणम्',
+    badge: 'साधकः',
+    currentStreak: 'नैरन्तर्यम् (Streak)',
+    totalSessions: 'सम्पूर्ण सत्राणि',
+    days: 'दिनानि',
+    done: 'सम्पन्नम्',
+    basicInfoTitle: 'वैदिक मूलविवरणम्',
+    editBtn: 'संशोधयतु',
+    vedaLabel: 'वेदशाखा',
+    sutraLabel: 'सूत्रम्',
+    gotraLabel: 'गोत्रम्',
+    pravaraLabel: 'प्रवरः',
+    locationLabel: 'स्थानम् / नगरम्',
+    targetLabel: 'नित्यलक्ष्यम्',
+    sessionsPerDay: 'सत्राणि / दिने',
+    notSet: 'अनिरूपितम्',
+    abhivadanamTitle: 'भवतः अभिवादनम्',
+    abhivadanamSub: 'स्वगोत्र-प्रवर-सूत्रानुसारेण स्वयमेव सङ्कलितम्।',
+    wisdomCardTitle: 'सन्ध्या ज्ञानम्',
+    wisdomCardSub: 'वैज्ञानिकप्रभावाः & मन्त्राः (त्रिभाषासु)',
+    modalTitle: 'मूलविवरणं परिवर्तयतु',
+    saveBtn: 'संरक्षतु (Save)',
+    savingBtn: 'संरक्षति...',
+    cancelBtn: 'निरस्यतु'
+  }
+};
+
 // ─── Vedic Defaults & Options ──────────────────────────────────────────────────
 const VEDA_OPTIONS = [
-  'யஜுர் வேதம் (கிருஷ்ண யஜுர்) - Yajurveda (Krishna)',
-  'யஜுர் வேதம் (சுக்ல யஜுர்) - Yajurveda (Shukla)',
+  'யஜுர் வேதம் (கிருஷ்ண யஜுர்) - Krishna Yajurveda',
+  'யஜுர் வேதம் (சுக்ல யஜுர்) - Shukla Yajurveda',
   'ரிக் வேதம் - Rigveda',
   'சாம வேதம் - Samaveda',
   'அதர்வண வேதம் - Atharvaveda'
@@ -66,6 +153,7 @@ export const Profile: React.FC = () => {
   const { userData, loading } = useUserData();
   const navigate = useNavigate();
 
+  const [lang, setLang] = useState<Language>('ta');
   const [isEditing, setIsEditing] = useState(false);
   const [copiedChant, setCopiedChant] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -78,6 +166,8 @@ export const Profile: React.FC = () => {
   const [pravara, setPravara] = useState('');
   const [location, setLocation] = useState('');
   const [dailyGoal, setDailyGoal] = useState<number>(3);
+
+  const t = PROFILE_STRINGS[lang];
 
   // Initialize form when opening modal
   const openEditModal = () => {
@@ -151,6 +241,26 @@ export const Profile: React.FC = () => {
   return (
     <div className="p-4 md:p-8 max-w-xl mx-auto space-y-6 pb-28 font-sans">
       
+      {/* ── Top Bar with Language Selector ── */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-display font-extrabold text-[#191815] dark:text-white tracking-tight">
+            {t.title}
+          </h1>
+          <p className="text-xs text-gray-400">{t.subtitle}</p>
+        </div>
+
+        {/* Language Capsule */}
+        <div className="inline-flex p-1 bg-white dark:bg-brand-darkElevated rounded-2xl shadow-sm border border-orange-100">
+          {(['ta', 'en', 'sa'] as Language[]).map(l => (
+            <button key={l} onClick={() => setLang(l)}
+              className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${lang === l ? 'bg-orange-500 text-white shadow-sm' : 'text-gray-500'}`}>
+              {l === 'ta' ? 'தமிழ்' : l === 'en' ? 'EN' : 'संस्कृतम्'}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* ── Profile Header Card (Orange & Crisp White) ── */}
       <div className="relative overflow-hidden bg-white dark:bg-brand-darkCard rounded-3xl p-6 border border-orange-100/80 dark:border-gray-800 shadow-[0_4px_24px_rgba(255,107,0,0.06)] flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -163,7 +273,7 @@ export const Profile: React.FC = () => {
                 {userData.name || 'Sandhyā Practitioner'}
               </h2>
               <span className="text-xs px-2 py-0.5 rounded-full bg-orange-50 text-orange-600 font-bold border border-orange-200/60">
-                சாதகர்
+                {t.badge}
               </span>
             </div>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
@@ -194,9 +304,9 @@ export const Profile: React.FC = () => {
             <Flame className="w-5 h-5 fill-orange-500 text-orange-500" />
           </div>
           <div>
-            <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Current Streak</p>
+            <p className="text-[10px] text-gray-400 font-extrabold uppercase tracking-wider">{t.currentStreak}</p>
             <p className="text-2xl font-display font-extrabold text-[#191815] dark:text-white">
-              {userData.currentStreak || 0} <span className="text-xs text-orange-600 font-normal">days</span>
+              {userData.currentStreak || 0} <span className="text-xs text-orange-600 font-normal">{t.days}</span>
             </p>
           </div>
         </div>
@@ -206,9 +316,9 @@ export const Profile: React.FC = () => {
             <Trophy className="w-5 h-5 text-orange-500" />
           </div>
           <div>
-            <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Total Sessions</p>
+            <p className="text-[10px] text-gray-400 font-extrabold uppercase tracking-wider">{t.totalSessions}</p>
             <p className="text-2xl font-display font-extrabold text-[#191815] dark:text-white">
-              {userData.totalSessions || 0} <span className="text-xs text-orange-600 font-normal">done</span>
+              {userData.totalSessions || 0} <span className="text-xs text-orange-600 font-normal">{t.done}</span>
             </p>
           </div>
         </div>
@@ -219,59 +329,59 @@ export const Profile: React.FC = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 rounded-full bg-orange-500" />
-            <h3 className="text-base font-display font-extrabold text-[#191815] dark:text-white">
-              அடிப்படை விவரங்கள் (Basic Information)
+            <h3 className="text-sm font-display font-extrabold text-[#191815] dark:text-white">
+              {t.basicInfoTitle}
             </h3>
           </div>
           <button
             onClick={openEditModal}
             className="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1"
           >
-            <span>திருத்துக</span>
+            <span>{t.editBtn}</span>
             <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
         <div className="divide-y divide-gray-100 dark:divide-gray-800 text-xs">
           <div className="py-2.5 flex items-center justify-between">
-            <span className="text-gray-500 font-medium">வேதம் (Veda Shakha)</span>
+            <span className="text-gray-500 font-medium">{t.vedaLabel}</span>
             <span className="font-bold text-[#191815] dark:text-white text-right">
-              {userData.veda || 'குறிப்பிடப்படவில்லை (Not set)'}
+              {userData.veda || t.notSet}
             </span>
           </div>
 
           <div className="py-2.5 flex items-center justify-between">
-            <span className="text-gray-500 font-medium">ஸூத்ரம் (Sutra)</span>
+            <span className="text-gray-500 font-medium">{t.sutraLabel}</span>
             <span className="font-bold text-[#191815] dark:text-white text-right">
-              {userData.sutra || 'குறிப்பிடப்படவில்லை (Not set)'}
+              {userData.sutra || t.notSet}
             </span>
           </div>
 
           <div className="py-2.5 flex items-center justify-between">
-            <span className="text-gray-500 font-medium">கோத்ரம் (Gotra)</span>
+            <span className="text-gray-500 font-medium">{t.gotraLabel}</span>
             <span className="font-bold text-[#191815] dark:text-white text-right">
-              {userData.gotra || 'குறிப்பிடப்படவில்லை (Not set)'}
+              {userData.gotra || t.notSet}
             </span>
           </div>
 
           <div className="py-2.5 flex items-center justify-between">
-            <span className="text-gray-500 font-medium">ப்ரவரம் (Pravara)</span>
+            <span className="text-gray-500 font-medium">{t.pravaraLabel}</span>
             <span className="font-bold text-[#191815] dark:text-white text-right truncate max-w-[220px]">
-              {userData.pravara || 'குறிப்பிடப்படவில்லை (Not set)'}
+              {userData.pravara || t.notSet}
             </span>
           </div>
 
           <div className="py-2.5 flex items-center justify-between">
-            <span className="text-gray-500 font-medium">இருப்பிடம் (City / Location)</span>
+            <span className="text-gray-500 font-medium">{t.locationLabel}</span>
             <span className="font-bold text-[#191815] dark:text-white text-right">
-              {userData.location || 'சென்னை (Chennai)'}
+              {userData.location || 'Chennai'}
             </span>
           </div>
 
           <div className="py-2.5 flex items-center justify-between">
-            <span className="text-gray-500 font-medium">தினசரி இலக்கு (Daily Target)</span>
+            <span className="text-gray-500 font-medium">{t.targetLabel}</span>
             <span className="font-bold text-orange-600 text-right">
-              {userData.dailyGoal || 3} வேளை (Sessions / Day)
+              {userData.dailyGoal || 3} {t.sessionsPerDay}
             </span>
           </div>
         </div>
@@ -283,7 +393,7 @@ export const Profile: React.FC = () => {
           <div className="flex items-center gap-2">
             <span className="text-base">📿</span>
             <h3 className="font-display font-extrabold text-sm text-[#191815] dark:text-white">
-              உங்கள் அபிவாதனம் (Your Abhivādaye Chant)
+              {t.abhivadanamTitle}
             </h3>
           </div>
           <button
@@ -301,7 +411,7 @@ export const Profile: React.FC = () => {
           </p>
         </div>
         <p className="text-[11px] text-gray-500 dark:text-gray-400 text-center">
-          உங்கள் கோத்ரம், ப்ரவரம் மற்றும் ஸூத்ரத்தின் அடிப்படையில் தானாக உருவாக்கப்பட்டது.
+          {t.abhivadanamSub}
         </p>
       </div>
 
@@ -315,8 +425,8 @@ export const Profile: React.FC = () => {
             <BookOpen className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="font-display font-extrabold text-base tracking-tight">சந்தியா ஞானம்</h4>
-            <p className="text-xs text-orange-100">ஆராய்ச்சி நன்மைகள் & மந்திர விளக்கம் (3 Languages)</p>
+            <h4 className="font-display font-extrabold text-base tracking-tight">{t.wisdomCardTitle}</h4>
+            <p className="text-xs text-orange-100">{t.wisdomCardSub}</p>
           </div>
         </div>
         <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-1 transition-transform">
@@ -335,7 +445,7 @@ export const Profile: React.FC = () => {
                   <UserIcon className="w-4 h-4" />
                 </div>
                 <h3 className="font-display font-bold text-lg text-[#191815] dark:text-white">
-                  விவரங்களை உள்ளிடுக
+                  {t.modalTitle}
                 </h3>
               </div>
               <button
@@ -441,7 +551,7 @@ export const Profile: React.FC = () => {
               {/* Daily Target */}
               <div className="space-y-1">
                 <label className="font-bold text-gray-700 dark:text-gray-300">
-                  தினசரி இலக்கு (Daily Target)
+                  {t.targetLabel}
                 </label>
                 <div className="grid grid-cols-3 gap-2 pt-1">
                   {[1, 2, 3].map((num) => (
@@ -455,7 +565,7 @@ export const Profile: React.FC = () => {
                           : 'bg-white dark:bg-brand-darkElevated text-gray-600 border-gray-200 dark:border-gray-700'
                       }`}
                     >
-                      {num} வேளை ({num}/day)
+                      {num} {t.sessionsPerDay}
                     </button>
                   ))}
                 </div>
@@ -468,14 +578,14 @@ export const Profile: React.FC = () => {
                   onClick={() => setIsEditing(false)}
                   className="py-3 rounded-2xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold active:scale-95 transition-all"
                 >
-                  ரத்து செய்க
+                  {t.cancelBtn}
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
                   className="py-3 rounded-2xl bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold shadow-md shadow-orange-500/25 active:scale-95 transition-all"
                 >
-                  {saving ? 'சேமிக்கிறது...' : 'சேமிக்க (Save)'}
+                  {saving ? t.savingBtn : t.saveBtn}
                 </button>
               </div>
             </form>

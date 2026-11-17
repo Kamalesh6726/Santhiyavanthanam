@@ -335,9 +335,31 @@ export const recordSession = async (uid: string, type: 'pratah' | 'madhyahnika' 
 };
 
 
-// ==========================================
-// Challenges
-// ==========================================
+// ─── Reset Circle Data ──────────────────────────────────────────────────────
+export const resetCircleData = async (circleId: string) => {
+  const batch = writeBatch(db);
+
+  // 1. Delete all activities
+  const actSnap = await getDocs(collection(db, `circles/${circleId}/activity`));
+  actSnap.forEach((d) => batch.delete(d.ref));
+
+  // 2. Delete all dailyProgress
+  const dpSnap = await getDocs(collection(db, `circles/${circleId}/dailyProgress`));
+  dpSnap.forEach((d) => batch.delete(d.ref));
+
+  // 3. Reset member session progress & streaks
+  const memSnap = await getDocs(collection(db, `circles/${circleId}/members`));
+  memSnap.forEach((d) => {
+    batch.update(d.ref, {
+      todayCompleted: 0,
+      currentStreak: 0,
+      lastCompletedDate: null
+    });
+  });
+
+  await batch.commit();
+};
+
 
 export const createChallenge = async (circleId: string, creatorUid: string, name: string) => {
   const challengeRef = doc(collection(db, 'challenges'));
