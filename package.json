@@ -7,9 +7,16 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "android:sync": "npm run build && cap sync android",
+    "android:open": "cap open android"
   },
   "dependencies": {
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/cli": "^8.6.2",
+    "@capacitor/core": "^8.6.2",
+    "@capacitor/splash-screen": "^8.0.2",
+    "@capacitor/status-bar": "^8.0.4",
     "autoprefixer": "^10.5.4",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",

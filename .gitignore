@@ -26,3 +26,12 @@ dist-ssr
 # Agent metadata
 .agents/
 skills-lock.json
+
+# Android build & local files
+android/.gradle/
+android/build/
+android/app/build/
+android/.idea/
+android/*.iml
+android/app/*.iml
+android/local.properties

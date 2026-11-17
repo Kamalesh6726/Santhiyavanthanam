@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sidebar } from './Sidebar';
 import { BottomNav } from './BottomNav';
+import { InstallPrompt } from '../shared/InstallPrompt';
 
 export const AppLayout: React.FC = () => {
   const location = useLocation();
@@ -31,6 +32,9 @@ export const AppLayout: React.FC = () => {
             </AnimatePresence>
           </div>
         </main>
+
+        {/* PWA Install Banner */}
+        <InstallPrompt />
 
         {/* Mobile Bottom Navigation */}
         <BottomNav />

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">SANDHYĀ</string>
+    <string name="title_activity_main">SANDHYĀ</string>
+    <string name="package_name">com.sandhya.app</string>
+    <string name="custom_url_scheme">com.sandhya.app</string>
+</resources>
