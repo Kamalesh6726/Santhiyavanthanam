@@ -24,6 +24,14 @@ export const createUserProfile = async (uid: string, email: string | null, name:
   }
 };
 
+export const updateUserProfile = async (uid: string, data: Record<string, any>) => {
+  const userRef = doc(db, 'users', uid);
+  await updateDoc(userRef, {
+    ...data,
+    updatedAt: serverTimestamp(),
+  });
+};
+
 // ==========================================
 // Circles & Invites
 // ==========================================

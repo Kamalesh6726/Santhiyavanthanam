@@ -9,6 +9,12 @@ export interface User {
   currentStreak: number;
   bestStreak: number;
   totalSessions: number;
+  veda?: string;
+  sutra?: string;
+  gotra?: string;
+  pravara?: string;
+  location?: string;
+  dailyGoal?: number;
 }
 
 export interface Session {
