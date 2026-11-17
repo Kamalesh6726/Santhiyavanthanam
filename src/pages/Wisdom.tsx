@@ -1,790 +1,973 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Search, Copy, Share2, ChevronDown, ChevronUp,
-  Sunrise, Sun, Sunset, Sparkles, Brain, Activity, Clock,
-  Check, ShieldCheck, Compass
+  Share2, Sparkles, ShieldCheck,
+  ExternalLink, ChevronLeft, ChevronRight, Layers,
+  FileText, Shuffle
 } from 'lucide-react';
 
 // ─── Language Type ─────────────────────────────────────────────────────────────
 type Language = 'ta' | 'en' | 'sa';
 
-// ─── Research Data & Multilingual Content ──────────────────────────────────────
-const CONTENT = {
-  ta: {
-    heroTag: 'வேத ஞானம் & நவீன அறிவியல்',
-    heroTitle: 'சந்தியா ஞானம்',
-    heroSubtitle: 'சந்தியாவந்தனத்தின் ஆன்மீக, தத்துவ மற்றும் அறிவியல் நன்மைகளை அறிந்துகொள்வோம்.',
-    heroQuote: 'சந்தியா என்பது ஒரு நேரம் மட்டுமல்ல — நம்மை நாமே உள்நோக்கித் திருப்பும் புனிதம்.',
-    searchPlaceholder: 'தேடுங்கள்... (எ.கா. காயத்ரி, பிராணாயாமம், நன்மைகள்)',
-    categories: [
-      { id: 'all', label: 'அனைத்தும்', emoji: '✨' },
-      { id: 'science', label: 'அறிவியல் நன்மைகள்', emoji: '🔬' },
-      { id: 'basics', label: 'அடிப்படை தத்துவம்', emoji: '🌅' },
-      { id: 'steps', label: 'முக்கிய படிகள்', emoji: '📿' },
-      { id: 'gayatri', label: 'காயத்ரி மகா மந்திரம்', emoji: '☀️' },
-      { id: 'times', label: 'சந்தியா நேரங்கள்', emoji: '⏱️' },
-      { id: 'faq', label: 'கேள்வி & பதில்', emoji: '❓' },
-    ],
-    disclaimerTitle: 'குறிப்பு & வழிகாட்டுதல்',
-    disclaimerText: 'இங்கு விவரிக்கப்படும் நன்மைகள் பாரம்பரிய வேத நூல்கள் மற்றும் நவீன நரம்பியல்/உடலியல் ஆராய்ச்சிகளின் அடிப்படையில் தொகுக்கப்பட்டுள்ளன. ஆசாரங்கள் குடும்ப சம்பிரதாயத்திற்கு ஏற்ப மாறுபடலாம்.',
-    quoteTitle: 'இன்றைய சிந்தனை',
-    quotes: [
-      'தினசரி கடமை சிறியதாக இருந்தாலும், அதன் தொடர்ச்சி பெரும் மாற்றத்தை உருவாக்கும்.',
-      'சந்தியா நேரம் வெளியில் ஒளி மாறும் நேரம் மட்டுமல்ல; உள்ளத்தில் அமைதி திரும்பும் நேரம்.',
-      'மந்திரத்தின் ஒலியும் அதன் உள்ளார்ந்த பொருளும் இணையும் போது மனம் தெளிவடைகிறது.',
-      'ஒழுக்கத்துடன் செய்யப்படும் ஒரு சிறிய நித்ய கர்மம் வாழ்க்கையில் நிலைத்தன்மையை உருவாக்கும்.',
-      'இன்றைய கடமையை இப்போதே நிறைவேற்றுவதே சாதனையின் முதல் படி.'
-    ],
-    scienceTitle: 'அறிவியல் & உடலியல் நன்மைகள்',
-    scienceSubtitle: 'நவீன நரம்பியல், இதயவியல் மற்றும் மனித உயிரியல் கடிகார ஆய்வுகள் உணர்த்தும் உண்மைகள்',
-    scientificBenefits: [
-      {
-        icon: 'Brain',
-        tag: 'நரம்பியல் ஆய்வு',
-        title: 'ஆல்ஃபா மூளை அலைகள் & மன ஒருமைப்பாடு',
-        desc: 'காயத்ரி மந்திரத்தின் 110 Hz ஒலி அதிர்வெண் மற்றும் சீரான உச்சரிப்பு மூளையின் ஆல்ஃபா (Alpha 8-12 Hz) அலைகளை அதிகரிக்கச் செய்கிறது. இது கவலை மற்றும் மனக்குழப்பத்தை நீக்கி ஆழ்ந்த கவனத்தை உருவாக்குகிறது.',
-        stat: 'EEG ஆய்வுகளில் 40% வரை ஆல்ஃபா அலைகள் தூண்டப்படுவது உறுதி செய்யப்பட்டுள்ளது.'
-      },
-      {
-        icon: 'Activity',
-        tag: 'இதயவியல் & நரம்பு மண்டலம்',
-        title: 'வேகஸ் நரம்பு தூண்டல் & ரத்த அழுத்த சமநிலை',
-        desc: 'பிராணாயாமத்தில் 1:4:2 விகித மூச்சடக்குதல் (கும்பகம்) பாராசிம்பதெடிக் நரம்பு மண்டலத்தை (Vagus Nerve) தூண்டுகிறது. இதனால் இதயத் துடிப்பு சீராகி, ரத்த அழுத்தம் குறைகிறது.',
-        stat: 'ஹார்ட் ரேட் வேரியபிலிட்டி (HRV) சமநிலையை மேம்படுத்துகிறது.'
-      },
-      {
-        icon: 'Clock',
-        tag: 'சர்க்காடியன் ரிதம்',
-        title: 'உயிரியல் கடிகாரம் & மெலடோனின் சீராக்கம்',
-        desc: 'காலை விடியலிலும் மாலை அந்திப்பொழுதிலும் சூரிய ஒளியை நோக்குவது கண்ணின் விழித்திரை வழியாக மூளையின் சுக்ராசியஸ்மேடிக் நியூக்ளியஸை (SCN) தூண்டுகிறது. இது இயற்கை தூக்க-விழிப்பு சுழற்சியை சீராக்குகிறது.',
-        stat: 'இரவில் ஆழ்ந்த தூக்கத்திற்கும் பகலில் உற்சாகத்திற்கும் உதவுகிறது.'
-      },
-      {
-        icon: 'ShieldCheck',
-        tag: 'நாளமில்லா சுரப்பிகள்',
-        title: 'கார்டிசோல் குறைப்பு & மன அழுத்தம் நீங்குதல்',
-        desc: 'தினமும் 3 வேளை 15 நிமிடங்கள் செய்யப்படும் இந்த தியானம் ரத்தத்தில் ஸ்ட்ரெஸ் ஹார்மோனான கார்டிசோல் அளவை கணிசமாகக் குறைத்து நோய் எதிர்ப்பு சக்தியை அதிகரிக்கிறது.',
-        stat: 'தொடர் பயிற்சியில் மன அழுத்தம் 35% குறைகிறது என மருத்துவ ஆய்வுகள் கூறுகின்றன.'
-      },
-      {
-        icon: 'Sun',
-        tag: 'குரோமோதெரபி',
-        title: 'சூரிய அர்க்யம் & கண் நலம்',
-        desc: 'கால் கட்டை விரலில் நின்று, இரு கைகளையும் உயர்த்தி நீர் வார்க்கும்போது விழும் நீர் துளிகள் வழியாக சூரிய ஒளி 7 வண்ணங்களாகப் பிரிந்து (Refraction) கண்களுக்கு மென்மையான ஒளியூட்டலை அளிக்கிறது.',
-        stat: 'கண்களின் ரெடினா நரம்புகளுக்கு பாதுகாப்பான இயற்கை ஒளி சிகிச்சை.'
-      },
-      {
-        icon: 'Compass',
-        tag: 'அக்குபிரஷர் & மூச்சுத்திறன்',
-        title: 'நுரையீரல் விரிவாக்கம் & பாத அக்குபிரஷர்',
-        desc: 'பிராணாயாமம் நுரையீரலின் முழு கொள்ளளவை பயன்படுத்துகிறது. அர்க்யம் செய்யும்போது பாத நுனிகளில் நிற்பது உடல் முழுவதும் உள்ள முக்கிய அக்குபிரஷர் புள்ளிகளை தூண்டுகிறது.',
-        stat: 'ஆக்ஸிஜன் உறிஞ்சும் திறனை 20% வரை அதிகரிக்கிறது.'
-      }
-    ],
-    basicsTitle: 'சந்தியாவந்தனம் என்றால் என்ன?',
-    basicsDesc: 'சந்தியாவந்தனம் என்பது வேத பாரம்பரியத்தில் ஒரு மனிதன் தவறாமல் கடைப்பிடிக்க வேண்டிய "நித்ய கர்மம்" (தினசரி கடமை). "சந்தியா" என்றால் "சங்கமம்" — இரவு முடிந்து பகல் தொடங்கும் காலை, நடுப்பகல் மற்றும் பகல் முடிந்து இரவு தொடங்கும் மாலை ஆகிய 3 காலங்களின் சங்கமத்தில் இறைவனையும் இயற்கையையும் வழிபடும் முறை.',
-    timesTitle: 'மூன்று சந்தியா காலங்கள்',
-    times: [
-      {
-        name: 'பிராதஃ சந்தியா (காலை)',
-        time: 'சூரிய உதயத்திற்கு முன் (நட்சத்திரங்கள் மறையும் நேரம் முதல் சூரிய உதயம் வரை)',
-        meaning: 'புதிய நாளுக்கான சக்தி, ஆன்ம விழிப்புணர்வு மற்றும் காயத்ரி தேவியின் வழிபாடு.'
-      },
-      {
-        name: 'மாத்யான்னிகம் (மதியம்)',
-        time: 'சூரியன் உச்சியில் இருக்கும் நண்பகல் வேளை',
-        meaning: 'சூரிய பகவானின் நேரடி உபாசனை மற்றும் உயிர்ச்சத்து பெறுதல்.'
-      },
-      {
-        name: 'ஸாயம் சந்தியா (மாலை)',
-        time: 'சூரிய அஸ்தமனத்திற்கு முன் (சூரியன் மறையும் நேரம் முதல் நட்சத்திரம் தோன்றும் வரை)',
-        meaning: 'நாள் முழுவதும் செய்த தவறுகளுக்கு மன்னிப்பு, நன்றி மற்றும் மன அமைதி.'
-      }
-    ],
-    angasTitle: 'சந்தியாவந்தனத்தின் 10 முக்கிய படிகள் (அங்கங்கள்)',
-    angas: [
-      { num: '01', title: 'ஆசமனம்', desc: 'தூய நீரை மூன்று முறை அருந்தி உடலையும் நாவையும் அகத்தையும் தூய்மைப்படுத்துதல்.' },
-      { num: '02', title: 'பிராணாயாமம்', desc: 'மூச்சைக் கட்டுப்படுத்தி நாடிகளை சுத்தி செய்யும் யோகப் பயிற்சி.' },
-      { num: '03', title: 'சங்கல்பம்', desc: 'இறைவனுக்கு அர்ப்பணிக்கும் மன உறுதியுடன் கர்மத்தை தொடங்குதல்.' },
-      { num: '04', title: 'மார்ஜனம்', desc: 'மந்திர நீரை தலையில் தெளித்து உள் தூய்மை பெறுதல்.' },
-      { num: '05', title: 'பிராசனம்', desc: 'நீர் அருந்தி உள்ளுறுப்புகளை மந்திர பூர்வமாக புனிதப்படுத்துதல்.' },
-      { num: '06', title: 'புனர் மார்ஜனம்', desc: 'மீண்டும் புனிதம் செய்து காயத்ரி ஜபத்திற்கு தயாராகுதல்.' },
-      { num: '07', title: 'அர்க்ய பிரதானம்', desc: 'சூரிய பகவானுக்கு இரு கைகளாலும் மூன்று முறை நீரை அர்ப்பணித்தல்.' },
-      { num: '08', title: 'காயத்ரி ஜபம்', desc: 'வேதங்களின் தாய் எனப் போற்றப்படும் காயத்ரி மந்திரத்தை 108/28 முறை ஒருமுகத்துடன் ஜபித்தல்.' },
-      { num: '09', title: 'சூரிய உபஸ்தானம்', desc: 'சூரியனை திசைகளின் வடிவாகவும் பிரபஞ்ச ஒளியாகவும் வணங்குதல்.' },
-      { num: '10', title: 'அபிவாதனம் & சமர்ப்பணம்', desc: 'ரிஷி பரம்பரை சொல்லி வணங்கி, செய்த கர்மத்தை பரப்பிரம்மத்திற்கு அர்ப்பணித்தல்.' }
-    ],
-    gayatriTitle: 'காயத்ரி மகா மந்திரம்',
-    gayatriSub: 'ஓம் பூர்ப்புவஸ்ஸுவ: | தத்ஸவிதுர்வரேண்யம் | பர்கோ தேவஸ்ய தீமஹி | தியோ யோ ந: ப்ரசோதயாத் ||',
-    gayatriWordMeaning: [
-      { word: 'ஓம் (Om)', mean: 'ஆதி பிரணவ நாதம், பிரம்மம்.' },
-      { word: 'பூ: புவ: ஸுவ: (Bhūr Bhuvaḥ Svaḥ)', mean: 'பூலோகம், புவர்லோகம், சுவர்லோகம் ஆகிய முப்புவனங்கள்.' },
-      { word: 'தத் ஸவிது: (Tat Savitur)', mean: 'அந்த பேரொளி படைத்த சூரிய பகவானின்.' },
-      { word: 'வரேண்யம் (Vareṇyam)', mean: 'வணங்கத்தக்க உன்னதமான.' },
-      { word: 'பர்க: தேவஸ்ய (Bhargo Devasya)', mean: 'தெய்வீக பாவங்களை அழிக்கும் ஒளியை.' },
-      { word: 'தீமஹி (Dhīmahi)', mean: 'நாங்கள் தியானிக்கிறோம்.' },
-      { word: 'திய: யோ ந: (Dhiyo Yo Naḥ)', mean: 'அவரே எங்கள் அறிவையும் புத்தியையும்.' },
-      { word: 'ப்ரசோதயாத் (Pracodayāt)', mean: 'நல்வழியில் செலுத்துவாராக.' }
-    ],
-    gayatriSummary: 'கருத்து: "முப்புவனங்களையும் படைத்த அந்த உன்னதமான சூரிய பகவானின் தெய்வீக ஒளியை நாம் தியானிக்கிறோம். அவர் நமது புத்தியை எப்போதும் சத்வ குணத்திலும் நேரிய வழியிலும் பிரகாசிக்கச் செய்வாராக."',
-    faqs: [
-      {
-        q: 'சந்தியாவந்தனம் தினமும் செய்ய வேண்டுமா?',
-        a: 'ஆம், வேத பாரம்பரியத்தில் இது "நித்ய கர்மம்" (தவறாமல் செய்ய வேண்டிய கடமை). தினமும் காலை, மதியம் மற்றும் மாலை செய்வதே முழு பலனைத் தரும்.'
-      },
-      {
-        q: 'காயத்ரி மந்திரத்தை சத்தமாக உச்சரிக்கலாமா?',
-        a: 'காயத்ரி மந்திரத்தை உதடுகள் மட்டும் அசைந்து மற்றவருக்கு கேட்காதபடி மென்மையாக (உபாம்சு) அல்லது மனதிற்குள் (மானசீகமாக) ஜபிப்பதே மிகுந்த ஆற்றல் வாய்ந்தது.'
-      },
-      {
-        q: 'நேரம் தவறினால் என்ன செய்வது?',
-        a: 'குறிப்பிட்ட சந்தியா நேரம் தவறிவிட்டால், ஒரு கூடுதல் அர்க்யம் (பிராயச்சித்த அர்க்யம்) சமர்ப்பித்து தொடர்ந்து செய்யலாம்.'
-      },
-      {
-        q: 'அறிவியல் ரீதியாக இதன் முக்கியத்துவம் என்ன?',
-        a: 'சந்தியாவந்தனம் என்பது மூச்சுப் பயிற்சி (பிராணாயாமம்), ஒளி சிகிச்சை (அர்க்யம்), ஒலி அதிர்வு தியானம் (காயத்ரி) மற்றும் நரம்பியல் தூண்டல் ஆகியவற்றின் முழுமையான தொகுப்பாகும்.'
-      }
-    ]
-  },
-  en: {
-    heroTag: 'Vedic Wisdom & Modern Science',
-    heroTitle: 'Sandhyā Jñānam',
-    heroSubtitle: 'Explore the profound spiritual, philosophical, and scientific dimensions of Sandhyāvandanam.',
-    heroQuote: 'Sandhyā is not merely a scheduled hour — it is a sacred pause to realign within.',
-    searchPlaceholder: 'Search wisdom... (e.g., Gayatri, Pranayama, benefits)',
-    categories: [
-      { id: 'all', label: 'All', emoji: '✨' },
-      { id: 'science', label: 'Scientific Research', emoji: '🔬' },
-      { id: 'basics', label: 'Philosophy', emoji: '🌅' },
-      { id: 'steps', label: 'Core Steps (Angas)', emoji: '📿' },
-      { id: 'gayatri', label: 'Gayatri Mantra', emoji: '☀️' },
-      { id: 'times', label: 'Sandhya Timings', emoji: '⏱️' },
-      { id: 'faq', label: 'FAQ', emoji: '❓' },
-    ],
-    disclaimerTitle: 'Context & Guidance',
-    disclaimerText: 'The benefits described here synthesize authentic traditional Vedic sources with modern neurobiological and chronobiological research. Observances and mantra sequences may vary by familial tradition and Sutra.',
-    quoteTitle: "Today's Contemplation",
-    quotes: [
-      'Even small daily disciplines, when repeated with consistency, produce profound transformation.',
-      'The Sandhya juncture is not just an external shift of light, but an internal return to equilibrium.',
-      'When the acoustic resonance of the mantra aligns with its meaning, the intellect awakens.',
-      'A disciplined daily practice creates unshakeable emotional and mental stability.',
-      'Fulfilling today’s duty without deferral is the very foundation of spiritual mastery.'
-    ],
-    scienceTitle: 'Scientific & Physiological Benefits',
-    scienceSubtitle: 'Validated by modern neuroscience, cardiology, and chronobiology research',
-    scientificBenefits: [
-      {
-        icon: 'Brain',
-        tag: 'Neuroscience',
-        title: 'Alpha Brainwave Synchronization',
-        desc: 'Chanting the Gayatri Mantra at an approximate fundamental frequency of 110 Hz induces pronounced Alpha brainwave activity (8-12 Hz) on EEG, quietening the Default Mode Network and improving cognitive focus.',
-        stat: 'Clinical EEG studies demonstrate up to 40% elevation in coherent Alpha rhythms.'
-      },
-      {
-        icon: 'Activity',
-        tag: 'Cardiovascular & ANS',
-        title: 'Vagus Nerve Activation & Blood Pressure Balance',
-        desc: 'The structured 1:4:2 breath retention (Kumbhaka) in Pranayama activates the parasympathetic branch via the vagus nerve, lowering resting heart rate, stabilizing arterial pressure, and optimizing Heart Rate Variability (HRV).',
-        stat: 'Shifts autonomic balance from fight-or-flight to rest-and-digest within 5 minutes.'
-      },
-      {
-        icon: 'Clock',
-        tag: 'Chronobiology',
-        title: 'Circadian Rhythm & Melatonin Regulation',
-        desc: 'Performing rituals at the twilight junctions (dawn and dusk) provides direct natural photic signals to the Suprachiasmatic Nucleus (SCN), stabilizing sleep-wake architecture, morning cortisol awakening, and nocturnal melatonin release.',
-        stat: 'Enhances restorative deep sleep and daytime alertness.'
-      },
-      {
-        icon: 'ShieldCheck',
-        tag: 'Neuroendocrinology',
-        title: 'Cortisol Reduction & Immune Resilience',
-        desc: 'Practicing 15-minute contemplative mindfulness thrice daily significantly suppresses circulating serum cortisol and inflammatory cytokines, strengthening immune defense against psychosomatic ailments.',
-        stat: 'Studies reflect a 35% reduction in chronic stress markers over 30 days.'
-      },
-      {
-        icon: 'Sun',
-        tag: 'Chromotherapy & Vision',
-        title: 'Solar Water Refraction (Arghya)',
-        desc: 'Offering water facing the morning sun creates a prism of droplets that refracts soft sunlight into seven spectral wavelengths. This stimulates photoreceptors in the eye safely without harmful ultraviolet radiation.',
-        stat: 'Stimulates retinal ganglion cells regulating neuroendocrine health.'
-      },
-      {
-        icon: 'Compass',
-        tag: 'Reflexology & Respiration',
-        title: 'Pulmonary Capacity & Toe Acupressure',
-        desc: 'Standing on the tips of the toes during morning Arghya exerts calibrated pressure on foundational reflexology points, while deep rhythmic diaphragmatic breathing expands pulmonary vital capacity.',
-        stat: 'Increases oxygen saturation and vital lung capacity by up to 20%.'
-      }
-    ],
-    basicsTitle: 'What is Sandhyāvandanam?',
-    basicsDesc: 'Sandhyāvandanam is an ancient daily Vedic ritual categorized as a "Nitya Karma" — an obligatory lifelong practice. "Sandhyā" signifies the juncture or intersection of time: night transitioning to day (dawn), noon when the sun reaches zenith, and day transitioning to night (dusk). It is an act of supreme gratitude to the Sun, Nature, and the Divine Source of Consciousness.',
-    timesTitle: 'The Three Sandhyā Periods',
-    times: [
-      {
-        name: 'Prātaḥ Sandhyā (Morning)',
-        time: 'Before sunrise (while stars are still visible until the disk appears)',
-        meaning: 'Activation of vital energy, gratitude for the new day, and Gayatri worship.'
-      },
-      {
-        name: 'Mādhyāhnikam (Noon)',
-        time: 'Exact solar midday when the sun is overhead',
-        meaning: 'Surya Upasana, invoking the sovereign source of cosmic vitality.'
-      },
-      {
-        name: 'Sāyam Sandhyā (Evening)',
-        time: 'Prior to sunset until stars become visible',
-        meaning: 'Evening contemplation, purification of daytime actions, and inner peace.'
-      }
-    ],
-    angasTitle: 'The 10 Core Angas (Steps) of the Ritual',
-    angas: [
-      { num: '01', title: 'Ācamanam', desc: 'Sipping consecrated water thrice to cleanse speech, throat, and mind.' },
-      { num: '02', title: 'Prāṇāyāma', desc: 'Regulated inhalation, retention (Kumbhaka), and exhalation to purify nadis.' },
-      { num: '03', title: 'Saṅkalpa', desc: 'Solemn declaration of spiritual intent and surrender of personal ego.' },
-      { num: '04', title: 'Mārjanam', desc: 'Sprinkling consecrated water upon the head for outer and inner purification.' },
-      { num: '05', title: 'Prāśanam', desc: 'Internal sanctification through designated Vedic water mantras.' },
-      { num: '06', title: 'Punar Mārjanam', desc: 'Secondary sprinkling preparing the consciousness for Gayatri Japa.' },
-      { num: '07', title: 'Arghya Pradānam', desc: 'Offering consecrated water thrice with both palms to Bhagavan Surya.' },
-      { num: '08', title: 'Gāyatrī Japa', desc: 'Rhythmic chanting of the sacred Gayatri Mantra (108 or 28 times).' },
-      { num: '09', title: 'Sūryopasthānam', desc: 'Standing adoration facing the Sun as the supreme embodiment of truth.' },
-      { num: '10', title: 'Abhivādanam & Samarpaṇam', desc: 'Reciting lineage (Rishis, Gotra, Sutra, Veda) and dedicating all actions to Paramatman.' }
-    ],
-    gayatriTitle: 'The Supreme Gāyatrī Mahā Mantra',
-    gayatriSub: 'Oṃ Bhūr Bhuvaḥ Svaḥ | Tat Savitur Vareṇyaṃ | Bhargo Devasya Dhīmahi | Dhiyo Yo Naḥ Pracodayāt ||',
-    gayatriWordMeaning: [
-      { word: 'Oṃ', mean: 'The primordial cosmic vibration, the Supreme Absolute.' },
-      { word: 'Bhūr Bhuvaḥ Svaḥ', mean: 'The three spheres of existence: physical, astral, and celestial realms.' },
-      { word: 'Tat Savitur', mean: 'Of that radiant Creator and Sun God (Savitr).' },
-      { word: 'Vareṇyam', mean: 'Most adorable, supremely worthy of adoration.' },
-      { word: 'Bhargo Devasya', mean: 'The divine, sin-effacing spiritual illumination.' },
-      { word: 'Dhīmahi', mean: 'We meditate upon.' },
-      { word: 'Dhiyo Yo Naḥ', mean: 'May that supreme light illuminate our intellect.' },
-      { word: 'Pracodayāt', mean: 'Guide, inspire, and awaken us to truth.' }
-    ],
-    gayatriSummary: 'Meaning: "We meditate upon the supreme, resplendent glory of the divine Solar Creator, who illuminates all realms. May that transcendental light inspire, illuminate, and guide our intellect toward the highest truth."',
-    faqs: [
-      {
-        q: 'Why must Sandhyavandanam be performed every day?',
-        a: 'In Vedic tradition, it is a Nitya Karma — an unconditioned daily practice. Just as the physical body requires daily nourishment, the intellect and spiritual sheath require daily purification.'
-      },
-      {
-        q: 'Should the Gayatri Mantra be chanted loudly or silently?',
-        a: 'Traditional texts advise chanting softly (Upamsu, where only lips move) or mentally (Manasika). Mental repetition is considered the most concentrated and transformative.'
-      },
-      {
-        q: 'What should be done if the exact Sandhya time is missed?',
-        a: 'If a session is delayed due to unavoidable circumstances, an additional expiatory offering (Prayaschitta Arghya) is given before proceeding with the normal ritual.'
-      },
-      {
-        q: 'What makes the practice scientifically unique?',
-        a: 'It unites diaphragmatic breath regulation, circadian light exposure, acoustic 110 Hz vocal resonance, and mindful autonomic downregulation in a seamless 15-minute protocol.'
-      }
-    ]
-  },
-  sa: {
-    heroTag: 'वैदिक ज्ञानम् & वैज्ञानिक दृष्टिकोनः',
-    heroTitle: 'सन्ध्या ज्ञानम्',
-    heroSubtitle: 'सन्ध्यावन्दनस्य आध्यात्मिक-तात्त्विक-वैज्ञानिक-प्रभावाणां समग्रं विवेचनम्।',
-    heroQuote: 'सन्ध्या न केवलं समयविशेषः — अपि तु आत्मसाक्षात्कारस्य दिव्यसन्धिकालः।',
-    searchPlaceholder: 'अन्वेषणं कुर्वन्तु... (उदा. गायत्री, प्राणायामः, लाभाः)',
-    categories: [
-      { id: 'all', label: 'सर्वम्', emoji: '✨' },
-      { id: 'science', label: 'वैज्ञानिक लाभाः', emoji: '🔬' },
-      { id: 'basics', label: 'मूलतत्त्वम्', emoji: '🌅' },
-      { id: 'steps', label: 'मुख्यानि अङ्गानि', emoji: '📿' },
-      { id: 'gayatri', label: 'गायत्री महामन्त्रः', emoji: '☀️' },
-      { id: 'times', label: 'सन्ध्या कालाः', emoji: '⏱️' },
-      { id: 'faq', label: 'प्रश्नोत्तरी', emoji: '❓' },
-    ],
-    disclaimerTitle: 'सूचना एवं मार्गदर्शनम्',
-    disclaimerText: 'अत्र वर्णिताः विषयाः पारम्परिकवैदिकग्रन्थानां आधुनिकशरीरक्रियाविज्ञानस्य च सम्मिश्रणरूपेण दीयन्ते। अनुष्ठानक्रमः स्वगृह्यसूत्रानुसारं भवेत्।',
-    quoteTitle: 'अद्यतन विचारः',
-    quotes: [
-      'नित्यकर्मणः सातत्येनैव आत्मबलं वर्धते।',
-      'सन्ध्याकाले बाह्यप्रकृतेः आभ्यन्तरचित्तस्य च शान्तिमयः सङ्गमः भवति।',
-      'मन्त्रोच्चारणेन सह तदर्थभावना एव यथार्थं फलदात्री।',
-      'नियमेन कृतं स्वल्पमपि कर्म जीवनस्य स्थैर्यं ददाति।',
-      'अद्यतनं कर्तव्यं सम्पाद्यैव साधकः कृतकृत्यो भवति।'
-    ],
-    scienceTitle: 'वैज्ञानिक-शारीरिक-प्रभावाः',
-    scienceSubtitle: 'आधुनिकतन्त्रिकाविज्ञान-हृद्रोगशास्त्र-सर्कैडियन-लय-शोधैः प्रमाणीकृतम्',
-    scientificBenefits: [
-      {
-        icon: 'Brain',
-        tag: 'न्यूरोसायन्स्',
-        title: 'अल्फा-तरङ्ग-समकालीकरणम् (Alpha Waves)',
-        desc: 'गायत्रीमन्त्रस्य ११० हर्ट्ज् नादकम्पनेन मस्तिष्के अल्फा-तरङ्गाः (८-१२ Hz) उत्पद्यन्ते, येन चित्तैकाग्रता, तनावमुक्तिः, स्मरणशक्तिश्च वर्धन्ते।',
-        stat: 'ईईजी-परीक्षणेषु मस्तिष्के शान्तिभावाभिवृद्धिः प्रदर्शिता।'
-      },
-      {
-        icon: 'Activity',
-        tag: 'हृदयतन्त्रम्',
-        title: 'वेगस-नाडी-प्रबोधनम् (Vagus Nerve)',
-        desc: 'प्राणायामे १:४:२ अनुपातेन कृतः कुम्भकः वेगस-नाडीं प्रेरयति। एतेन रक्तचापः नियन्त्रितः भवति, हृदयगतिश्च समशीतोष्णा भवति।',
-        stat: 'हार्ट रेट् विएरिअशन (HRV) सन्तुलनं प्राप्नोति।'
-      },
-      {
-        icon: 'Clock',
-        tag: 'सर्कैडियन रिदम्',
-        title: 'जैविक-घटी-सन्तुलनम् (Circadian Rhythm)',
-        desc: 'उभयोः सन्ध्ययोः सूर्यप्रकाशस्य दर्शनं नेत्रपटलेन मस्तिष्के पीनियल-ग्रन्थिं प्रेरयति। एतेन मेलैटोनिन-हार्मोन-सन्तुलनं भूत्वा सुखनिद्रा आगच्छति।',
-        stat: 'शरीरस्य आन्तरिककालचक्रं सम्यक् सञ्चालयति।'
-      },
-      {
-        icon: 'ShieldCheck',
-        tag: 'हार्मोन-विज्ञानम्',
-        title: 'कोर्टिसोल-न्यूनता एवं रोगप्रतिरोधकता',
-        desc: 'त्रिकालसन्ध्यावन्दनेन रक्तगत-तनावकारि-हार्मोन (Cortisol) ३५% न्यूनं भवति, येन स्वाभाविक-रोगप्रतिरोधक-शक्तिः वर्धते।',
-        stat: 'मानसिक-अवसादस्य सम्भावनां दूरीकरोति।'
-      },
-      {
-        icon: 'Sun',
-        tag: 'सौर-चिकित्सा',
-        title: 'सूर्यार्घ्यदानम् एवं वर्णचिकित्सा (Chromotherapy)',
-        desc: 'हस्ताभ्याम् उदकं सिञ्चन् सूर्यदर्शनसमये जलकणाः सूर्यकिरणान् सप्तवर्णे विभजन्ति। एतेन नेत्रज्योतिः प्रवर्धते।',
-        stat: 'नेत्राय आरोग्यप्रदं सौर-किरण-प्रसादनम्।'
-      },
-      {
-        icon: 'Compass',
-        tag: 'एक्यूप्रेशरम्',
-        title: 'पादाम्रेण स्थितिः एवं फुफ्फुस-विस्तारः',
-        desc: 'प्रातः अर्घ्यप्रदाने पादाङ्गुष्ठाग्रेण उत्थानं मर्मस्थानानि प्रेरयति। प्राणायामेन फुफ्फुसस्य वायुग्रहणक्षमता वर्धते।',
-        stat: 'प्राणवायु-सञ्चारः २०% पर्यन्तं वर्धते।'
-      }
-    ],
-    basicsTitle: 'सन्ध्यावन्दनं किम्?',
-    basicsDesc: 'सन्ध्यावन्दनं वैदिकपरम्परायां पुरुषार्थसाधकं नित्यकर्म अस्ति। "सन्ध्या" नाम कालद्वयस्य सङ्गमः — रात्रिशेषे सूर्योदयात् प्राक्, मध्याह्ने सूर्ये मूर्ध्नि स्थिते, तथा दिनान्ते सूर्यास्तसमये क्रियमाणं परमात्मनः सवितुश्च आराधनम्।',
-    timesTitle: 'त्रयः सन्ध्याकालाः',
-    times: [
-      {
-        name: 'प्रातः सन्ध्या',
-        time: 'सूर्योदयात् प्राक् (नक्षत्रदर्शने सति सूर्योदयं यावत्)',
-        meaning: 'गायत्री-रूप-ब्रह्म-उपासना, आत्मजागृतिः, नूतनदिवसस्य प्रारम्भे बलप्राप्तिः।'
-      },
-      {
-        name: 'माध्याह्निकम्',
-        time: 'मध्याह्ने सूर्ये आकाशस्य मध्ये स्थिते',
-        meaning: 'सावित्री-रूप-सूर्य-उपासना, प्राणशक्तेः सम्यक् सञ्चयः।'
-      },
-      {
-        name: 'सायं सन्ध्या',
-        time: 'सूर्यास्तात् प्राक् (सूर्यास्ते सति नक्षत्रदर्शनावधि)',
-        meaning: 'सरस्वती-रूप-परमेश्वर-उपासना, दिनकृत-पापविशुद्धिः, शान्तिश्च।'
-      }
-    ],
-    angasTitle: 'दशविधानि मुख्याङ्गानि',
-    angas: [
-      { num: '०१', title: 'आचमनम्', desc: 'पवित्रजलेन त्रिः प्राशनेन वाक्-मनो-देह-शुद्धिः।' },
-      { num: '०२', title: 'प्राणायामः', desc: 'पूरक-कुम्भक-रेचकैः नाडीशोधनम् चित्तैकाग्रता च।' },
-      { num: '०३', title: 'सङ्कल्पः', desc: 'परमेश्वरप्रीत्यर्थं कर्तव्यबुद्ध्या कर्मारम्भः।' },
-      { num: '०४', title: 'मार्जनम्', desc: 'आपोहिष्ठा मन्त्रैः शिरसि मन्त्रोदकप्रोक्षणम्।' },
-      { num: '०५', title: 'प्राशनम्', desc: 'सूर्यश्च मा मन्युश्च मन्त्रेण पापप्रक्षालनार्थं जलप्राशनम्।' },
-      { num: '०६', title: 'पुनर्मार्जनम्', desc: 'गायत्रीजपार्थं देहस्य पुनः पवित्रीकरणम्।' },
-      { num: '०७', title: 'अर्घ्यप्रदानम्', desc: 'सूर्याय हस्ताभ्यां त्रिः जलसमर्पणम्।' },
-      { num: '०८', title: 'गायत्रीजपः', desc: 'वेदानां मातुः गायत्रीमन्त्रस्य १०८/२८ वारं ध्यानपूर्वकं जपः।' },
-      { num: '०९', title: 'सूर्योपस्थानम्', desc: 'उदुत्यं चित्रं मन्त्रैः प्रत्यक्षसूर्यस्य अभिवन्दनम्।' },
-      { num: '१०', title: 'अभिवादनम् & समर्पणम्', desc: 'प्रवर-गोत्र-सूत्राणां स्मरणं कृत्वा सर्वं कर्म ब्रह्मार्पणम्।' }
-    ],
-    gayatriTitle: 'श्री गायत्री महामन्त्रः',
-    gayatriSub: 'ॐ भूर्भुवः स्वः । तत्सवितुर्वरेण्यं । भर्गो देवस्य धीमहि । धियो यो नः प्रचोदयात् ॥',
-    gayatriWordMeaning: [
-      { word: 'ॐ', mean: 'परमात्मा, प्रणवस्वरूपः।' },
-      { word: 'भूर्भुवः स्वः', mean: 'भूलोकः, भुवर्लोकः, स्वर्लोकः चेति त्रयः लोकाः।' },
-      { word: 'तत्सवितुः', mean: 'तस्य सर्वोत्पादकस्य सवितुर्देवस्य।' },
-      { word: 'वरेण्यम्', mean: 'सर्वश्रेष्ठं वन्दनीयं च।' },
-      { word: 'भर्गो देवस्य', mean: 'पापनाशकं दिव्यं तेजः।' },
-      { word: 'धीमहि', mean: 'वयं ध्यायामः।' },
-      { word: 'धियो यो नः', mean: 'यः परमात्मा अस्माकं बुद्धीः।' },
-      { word: 'प्रचोदयात्', mean: 'सद्धर्ममार्गे प्रेरयेत्।' }
-    ],
-    gayatriSummary: 'भावार्थः — "त्रिलोकीरचयितुः परमपूज्यस्य सवितुर्देवस्य तद् पापनाशकं दिव्यं तेजः वयं ध्यायामः, यः अस्माकं बुद्धीः सन्मार्गे प्रेरयेत्।',
-    faqs: [
-      {
-        q: 'सन्ध्यावन्दनं नित्यं किमर्थं कर्तव्यम्?',
-        a: 'वैदिकपरम्परायां सन्ध्यावन्दनं नित्यकर्म। यथा शरीरस्य पोषणार्थम् आहारः आवश्यकः, तथैव आत्मनः बुद्धेश्च शुद्धये त्रिकालसन्ध्या अपेक्षिता।'
-      },
-      {
-        q: 'गायत्रीमन्त्रस्य जपः कथं विधेयः?',
-        a: 'उपांशु (ओष्ठौ चालयन् अन्यैः अश्राव्यम्) अथवा मानसं (चित्तमध्य एव) जपः उत्तमः फलप्रदश्च।'
-      },
-      {
-        q: 'कालातिक्रमे किं करणीयम्?',
-        a: 'यदि प्रमादात् मुख्यकालः अतीतः, तर्हि प्रायश्चित्तार्थं चतुर्थम् अर्घ्यं दत्वा कर्म समापनीयम्।'
-      },
-      {
-        q: 'अस्य वैज्ञानिकं महत्त्वं किम्?',
-        a: 'प्राणायामः, प्रकाशचिकित्सा, ध्वनिकम्पनध्यानं, तथा स्वायत्ततन्त्रिकानियन्त्रणं चेति सर्वं सम्भूय स्वास्थ्यं मेधां च पोषयति।'
-      }
-    ]
-  }
+// ─── Flashcards Data across 3 Languages ─────────────────────────────────────────
+const FLASHCARDS = {
+  ta: [
+    {
+      id: 1,
+      tag: '01 • அறிமுகம்',
+      title: 'சந்தியாவந்தனம் என்றால் என்ன?',
+      subtitle: 'வேத மரபில் நித்ய கர்மா',
+      icon: '🌅',
+      content: (
+        <div className="space-y-4 text-sm leading-relaxed">
+          <p className="font-medium text-gray-700 dark:text-gray-200">
+            <strong>சந்தியாவந்தனம்</strong> என்பது வேத மரபில் தவறாமல் கடைப்பிடிக்கப்படும் ஒரு <strong>நித்ய கர்மா</strong> (தினசரி கடமை). "சந்தியா" என்பது பகலும் இரவும் சந்திக்கும் புனிதம் வாய்ந்த காலத்தைக் குறிக்கிறது.
+          </p>
+          <div className="bg-orange-50/70 dark:bg-orange-950/30 p-4 rounded-2xl border border-orange-100 dark:border-orange-900/40 space-y-2">
+            <p className="font-bold text-xs uppercase tracking-wider text-orange-600">மூன்று முக்கிய அனுஷ்டான நேரங்கள்:</p>
+            <ul className="space-y-1.5 text-xs text-gray-700 dark:text-gray-300">
+              <li>• <strong>1. பிராத சந்தியா</strong> – காலை விடியல் (சூரிய உதயத்திற்கு முன்).</li>
+              <li>• <strong>2. மாத்யானிகம்</strong> – நண்பகல் (சூரியன் உச்சியில் இருக்கும் வேளை).</li>
+              <li>• <strong>3. சாயம் சந்தியா</strong> – மாலை அந்திப்பொழுது (சூரிய அஸ்தமனம்).</li>
+            </ul>
+          </div>
+          <p className="text-xs text-gray-600 dark:text-gray-400">
+            இது சூரிய உபாசனை, காயத்ரி ஜபம், பிராணாயாமம் மற்றும் வேத மந்திரங்களை ஒருங்கிணைத்த முழுமையான ஆன்மீகப் பயிற்சியாகும்.
+          </p>
+        </div>
+      )
+    },
+    {
+      id: 2,
+      tag: '02 • ஆன்மீகம்',
+      title: 'சந்தியாவந்தனத்தின் ஆன்மீக நன்மைகள்',
+      subtitle: 'மனத்தூய்மை & ஆன்ம ஒழுக்கம்',
+      icon: '🪔',
+      content: (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div className="p-3.5 rounded-2xl bg-white dark:bg-brand-darkElevated border border-orange-100 dark:border-gray-800 shadow-sm space-y-1">
+            <span className="font-extrabold text-orange-600">1. ஆன்மீக ஒழுக்கம்</span>
+            <p className="text-gray-600 dark:text-gray-300">தினமும் குறிப்பிட்ட நேரத்தில் இறைவனை வழிபடுவதன் மூலம் வாழ்க்கையில் ஒழுக்கமும் நிலைத்தன்மையும் வளர்கிறது.</p>
+          </div>
+          <div className="p-3.5 rounded-2xl bg-white dark:bg-brand-darkElevated border border-orange-100 dark:border-gray-800 shadow-sm space-y-1">
+            <span className="font-extrabold text-orange-600">2. காயத்ரி உபாசனை</span>
+            <p className="text-gray-600 dark:text-gray-300">காயத்ரி மந்திரம் அறிவு, தெளிவு மற்றும் நல்வழிச் சிந்தனைக்காகப் பிரார்த்திக்கும் உச்சகட்ட வேத மந்திரமாகும்.</p>
+          </div>
+          <div className="p-3.5 rounded-2xl bg-white dark:bg-brand-darkElevated border border-orange-100 dark:border-gray-800 shadow-sm space-y-1">
+            <span className="font-extrabold text-orange-600">3. மன ஒருமைப்பாடு</span>
+            <p className="text-gray-600 dark:text-gray-300">மந்திர ஜபம் மற்றும் தியானத்தில் மனதை ஒருமுகப்படுத்தும் அபாரமான பயிற்சி கிடைக்கிறது.</p>
+          </div>
+          <div className="p-3.5 rounded-2xl bg-white dark:bg-brand-darkElevated border border-orange-100 dark:border-gray-800 shadow-sm space-y-1">
+            <span className="font-extrabold text-orange-600">4. வேத மரபைப் பாதுகாத்தல்</span>
+            <p className="text-gray-600 dark:text-gray-300">தலைமுறை தலைமுறையாகக் கடத்தப்பட்டு வரும் வேத அனுஷ்டானத்தைத் தொடர்ந்து பாதுகாக்க உதவுகிறது.</p>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 3,
+      tag: '03 • அறிவியல் பார்வைகள்',
+      title: 'அறிவியல் பார்வையில் சாத்தியமான நன்மைகள்',
+      subtitle: 'நவீன உடலியல் & நரம்பியல்',
+      icon: '🔬',
+      content: (
+        <div className="space-y-3 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div className="p-3 rounded-2xl bg-orange-50/50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900/40">
+              <strong className="text-orange-700 dark:text-orange-400 block mb-0.5">A. மன அழுத்த மேலாண்மை</strong>
+              <p className="text-gray-600 dark:text-gray-300">மந்திர தியானம் மன அழுத்தம், கார்டிசோல் மற்றும் பதற்றத்தை நிர்வகிக்க உதவுவது ஆய்வுகளில் காணப்படுகிறது.</p>
+            </div>
+            <div className="p-3 rounded-2xl bg-orange-50/50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900/40">
+              <strong className="text-orange-700 dark:text-orange-400 block mb-0.5">B. மூச்சுக் கட்டுப்பாடு</strong>
+              <p className="text-gray-600 dark:text-gray-300">பிராணாயாமம் போன்ற கட்டுப்படுத்தப்பட்ட மூச்சுப் பயிற்சிகள் வேகஸ் நரம்பை தூண்டி உடலின் ஓய்வு நிலையைத் தூண்டுகிறது.</p>
+            </div>
+            <div className="p-3 rounded-2xl bg-orange-50/50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900/40">
+              <strong className="text-orange-700 dark:text-orange-400 block mb-0.5">C. கவனிக்கும் திறன்</strong>
+              <p className="text-gray-600 dark:text-gray-300">மந்திர ஜபம் மற்றும் தியானப் பயிற்சிகள் மூளையின் ஆல்ஃபா அலைகளைத் தூண்டி கவனத்தை ஒருமுகப்படுத்துகிறது.</p>
+            </div>
+            <div className="p-3 rounded-2xl bg-orange-50/50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900/40">
+              <strong className="text-orange-700 dark:text-orange-400 block mb-0.5">D. தினசரி வாழ்க்கை ஒழுக்கம்</strong>
+              <p className="text-gray-600 dark:text-gray-300">குறிப்பிட்ட அந்தி வேளைகளில் அனுஷ்டானம் செய்வது சர்க்காடியன் உயிரியல் கடிகாரத்தை ஒழுங்குபடுத்துகிறது.</p>
+            </div>
+          </div>
+          <div className="p-3 rounded-xl bg-gray-50 dark:bg-brand-darkElevated border border-gray-100 dark:border-gray-800 text-[11px] text-gray-500">
+            <strong>அறிவியல் குறிப்பு:</strong> மேற்கண்ட நன்மைகள் மந்திர தியானம் மற்றும் மூச்சுப் பயிற்சி ஆய்வுகளிலிருந்து பெறப்பட்டவை. முழுமையான மருத்துவ சிகிச்சையாகக் கருதக்கூடாது.
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 4,
+      tag: '04 • அனுஷ்டானம்',
+      title: 'சந்தியாவந்தனத்தின் முக்கிய அங்கங்கள்',
+      subtitle: 'அனுஷ்டானமும் அதன் பாரம்பரிய முக்கியத்துவமும்',
+      icon: '📿',
+      content: (
+        <div className="overflow-hidden rounded-2xl border border-orange-100 dark:border-gray-800">
+          <table className="w-full text-xs text-left">
+            <thead className="bg-orange-50 dark:bg-orange-950/40 text-orange-900 dark:text-orange-300 font-bold border-b border-orange-100">
+              <tr>
+                <th className="py-2.5 px-3">அனுஷ்டானம்</th>
+                <th className="py-2.5 px-3">பாரம்பரிய முக்கியத்துவம்</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-800 text-gray-700 dark:text-gray-300 bg-white dark:bg-brand-darkCard">
+              <tr>
+                <td className="py-2.5 px-3 font-bold text-orange-600">ஆச்சமனம்</td>
+                <td className="py-2.5 px-3">உள்ளத் தூய்மை மற்றும் அகச்சுத்தம்.</td>
+              </tr>
+              <tr>
+                <td className="py-2.5 px-3 font-bold text-orange-600">பிராணாயாமம்</td>
+                <td className="py-2.5 px-3">மூச்சு மற்றும் மன ஒருமைப்பாடு.</td>
+              </tr>
+              <tr>
+                <td className="py-2.5 px-3 font-bold text-orange-600">சங்கல்பம்</td>
+                <td className="py-2.5 px-3">அனுஷ்டான நோக்கத்தை உறுதிப்படுத்துதல்.</td>
+              </tr>
+              <tr>
+                <td className="py-2.5 px-3 font-bold text-orange-600">அர்க்யப் பிரதானம்</td>
+                <td className="py-2.5 px-3">சூரிய தேவனுக்கு நீர் சமர்ப்பித்தல்.</td>
+              </tr>
+              <tr>
+                <td className="py-2.5 px-3 font-bold text-orange-600">காயத்ரி ஜபம்</td>
+                <td className="py-2.5 px-3">அறிவொளி மற்றும் மேதைமைக்கான பிரார்த்தனை.</td>
+              </tr>
+              <tr>
+                <td className="py-2.5 px-3 font-bold text-orange-600">உபஸ்தானம்</td>
+                <td className="py-2.5 px-3">பிரபஞ்ச ஒளியான சூரிய தேவனை வணங்குதல்.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )
+    },
+    {
+      id: 5,
+      tag: '05 • மகா மந்திரம்',
+      title: 'காயத்ரி மந்திரம் & பொருள்',
+      subtitle: 'வேதங்களின் தாய் எனப் போற்றப்படும் மந்திரம்',
+      icon: '☀️',
+      content: (
+        <div className="space-y-4 text-center">
+          <div className="p-4 rounded-2xl bg-orange-50/60 dark:bg-orange-950/30 border border-orange-200/80 font-serif text-base sm:text-lg font-bold text-orange-700 dark:text-orange-400 leading-loose">
+            ஓம் பூர் புவஸ் ஸுவஹ: <br />
+            தத் ஸவிதுர் வரேண்யம் <br />
+            பர்கோ தேவஸ்ய தீமஹி <br />
+            தியோ யோ நஹ் ப்ரசோதயாத் ||
+          </div>
+          <div className="p-3.5 rounded-2xl bg-white dark:bg-brand-darkElevated border border-gray-100 text-xs text-left space-y-1">
+            <span className="font-bold text-orange-600 block">பொருள்:</span>
+            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+              "அந்த தெய்வீகமான உன்னத சூரிய ஒளியை நாம் தியானிக்கிறோம். அந்த ஒளி நமது அறிவையும் சிந்தனையையும் எப்போதும் நல்வழியில் செலுத்தட்டும்."
+            </p>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 6,
+      tag: '06 • அறிவியல் ஆய்வுகள்',
+      title: 'அறிவியல் ஆராய்ச்சி ஆதாரங்கள் (PubMed & Journals)',
+      subtitle: 'நவீன மருத்துவ இதழ்களில் வெளியிடப்பட்ட ஆய்வுகள்',
+      icon: '📑',
+      content: (
+        <div className="space-y-2.5 text-xs">
+          <p className="text-gray-600 dark:text-gray-400">
+            மந்திர தியானம் மற்றும் அதன் நரம்பியல் செயல்பாடுகளைப் புரிந்துகொள்ள உதவும் முக்கிய ஆய்வுகள்:
+          </p>
+          <div className="space-y-2">
+            <a
+              href="https://pubmed.ncbi.nlm.nih.gov/35329068/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-3 rounded-2xl bg-white dark:bg-brand-darkElevated border border-orange-100 dark:border-gray-800 hover:border-orange-300 transition-all flex items-center justify-between group shadow-sm"
+            >
+              <div>
+                <span className="font-bold text-orange-600 block">1. Mantra-Based Meditation and Mental Health (2022)</span>
+                <span className="text-[11px] text-gray-500">National Library of Medicine • PubMed: 35329068</span>
+              </div>
+              <ExternalLink className="w-4 h-4 text-orange-500 group-hover:translate-x-0.5 transition-transform shrink-0" />
+            </a>
+
+            <a
+              href="https://pubmed.ncbi.nlm.nih.gov/36329765/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-3 rounded-2xl bg-white dark:bg-brand-darkElevated border border-orange-100 dark:border-gray-800 hover:border-orange-300 transition-all flex items-center justify-between group shadow-sm"
+            >
+              <div>
+                <span className="font-bold text-orange-600 block">2. Mantra Meditation and Health Benefits (2022)</span>
+                <span className="text-[11px] text-gray-500">Systematic Review • PubMed: 36329765</span>
+              </div>
+              <ExternalLink className="w-4 h-4 text-orange-500 group-hover:translate-x-0.5 transition-transform shrink-0" />
+            </a>
+
+            <a
+              href="https://psvmkendra.com/index.php/journal/article/view/2020"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-3 rounded-2xl bg-white dark:bg-brand-darkElevated border border-orange-100 dark:border-gray-800 hover:border-orange-300 transition-all flex items-center justify-between group shadow-sm"
+            >
+              <div>
+                <span className="font-bold text-orange-600 block">3. Gayatri Mantra Chanting and Sustained Attention (2025)</span>
+                <span className="text-[11px] text-gray-500">Cognitive Neuro-Psychological Research</span>
+              </div>
+              <ExternalLink className="w-4 h-4 text-orange-500 group-hover:translate-x-0.5 transition-transform shrink-0" />
+            </a>
+          </div>
+          <p className="text-[10px] text-gray-400 italic">
+            *ஆராய்ச்சி வெளிப்படைத்தன்மை: இந்த ஆய்வுகள் மந்திர தியானத்தின் பலன்களை விளக்குகின்றன. ஒவ்வொரு ஆய்வையும் அதன் முறைக்கேற்ப தனித்தனியாக மதிப்பிட வேண்டும்.
+          </p>
+        </div>
+      )
+    },
+    {
+      id: 7,
+      tag: '07 • லட்சியம்',
+      title: 'இறுதிச் சிந்தனை & சங்கல்பம்',
+      subtitle: 'மரபையும் அறிவியலையும் இணைக்கும் பாலம்',
+      icon: '🌟',
+      content: (
+        <div className="space-y-4 text-center py-2">
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-200 leading-relaxed">
+            சந்தியாவந்தனம் என்பது வேத மரபில் ஆன்மீக ஒழுக்கத்தையும் இறை வழிபாட்டையும் ஒருங்கிணைக்கும் ஒரு உன்னதமான அனுஷ்டானமாகும்.
+          </p>
+          <div className="p-5 rounded-3xl bg-gradient-to-tr from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/25 space-y-2">
+            <Sparkles className="w-6 h-6 mx-auto text-orange-200" />
+            <h4 className="text-base font-extrabold font-display">
+              "வேத ஞானத்தைப் பாதுகாப்போம். உண்மையான அறிவைப் பகிர்வோம்."
+            </h4>
+            <p className="text-xs text-orange-100">
+              பாரம்பரிய நோக்கத்தைப் புரிந்துகொள்வதோடு, அதில் இடம்பெறும் மூச்சுப் பயிற்சி மற்றும் மந்திர தியானம் தொடர்பான அறிவியல் ஆய்வுகளையும் உணர்ந்து அனுஷ்டிப்போம்.
+            </p>
+          </div>
+        </div>
+      )
+    }
+  ],
+  en: [
+    {
+      id: 1,
+      tag: '01 • Overview',
+      title: 'What is Sandhyāvandanam?',
+      subtitle: 'The Daily Vedic Nitya Karma',
+      icon: '🌅',
+      content: (
+        <div className="space-y-4 text-sm leading-relaxed">
+          <p className="font-medium text-gray-700 dark:text-gray-200">
+            <strong>Sandhyāvandanam</strong> is a foundational <strong>Nitya Karma</strong> (obligatory daily duty) in the Vedic tradition. "Sandhyā" denotes the sacred intersection or juncture of day and night.
+          </p>
+          <div className="bg-orange-50/70 dark:bg-orange-950/30 p-4 rounded-2xl border border-orange-100 dark:border-orange-900/40 space-y-2">
+            <p className="font-bold text-xs uppercase tracking-wider text-orange-600">The Three Daily Sandhyā Sessions:</p>
+            <ul className="space-y-1.5 text-xs text-gray-700 dark:text-gray-300">
+              <li>• <strong>1. Prātaḥ Sandhyā</strong> – Dawn (before sunrise, as stars fade).</li>
+              <li>• <strong>2. Mādhyāhnikam</strong> – Solar Noon (when the sun is at its zenith).</li>
+              <li>• <strong>3. Sāyam Sandhyā</strong> – Dusk (sunset transitioning to night).</li>
+            </ul>
+          </div>
+          <p className="text-xs text-gray-600 dark:text-gray-400">
+            It integrates solar adoration, Gayatri Japa, Pranayama breath control, and Vedic cleansing rituals.
+          </p>
+        </div>
+      )
+    },
+    {
+      id: 2,
+      tag: '02 • Spirituality',
+      title: 'Spiritual Dimensions & Benefits',
+      subtitle: 'Inner purity and sacred continuity',
+      icon: '🪔',
+      content: (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div className="p-3.5 rounded-2xl bg-white dark:bg-brand-darkElevated border border-orange-100 dark:border-gray-800 shadow-sm space-y-1">
+            <span className="font-extrabold text-orange-600">1. Spiritual Discipline</span>
+            <p className="text-gray-600 dark:text-gray-300">Daily practice at designated hours establishes unwavering rhythm, discipline, and emotional stability.</p>
+          </div>
+          <div className="p-3.5 rounded-2xl bg-white dark:bg-brand-darkElevated border border-orange-100 dark:border-gray-800 shadow-sm space-y-1">
+            <span className="font-extrabold text-orange-600">2. Gayatri Upasana</span>
+            <p className="text-gray-600 dark:text-gray-300">The Gayatri Mantra is the pinnacle prayer for intellect awakening, clarity of thought, and righteous living.</p>
+          </div>
+          <div className="p-3.5 rounded-2xl bg-white dark:bg-brand-darkElevated border border-orange-100 dark:border-gray-800 shadow-sm space-y-1">
+            <span className="font-extrabold text-orange-600">3. Mental Concentration</span>
+            <p className="text-gray-600 dark:text-gray-300">Rhythmic chanting and pranic breath control quiet internal mental chatter and sharpen focus.</p>
+          </div>
+          <div className="p-3.5 rounded-2xl bg-white dark:bg-brand-darkElevated border border-orange-100 dark:border-gray-800 shadow-sm space-y-1">
+            <span className="font-extrabold text-orange-600">4. Vedic Heritage Preservation</span>
+            <p className="text-gray-600 dark:text-gray-300">Safeguards uninterrupted millenia-old ancestral knowledge and sacred oral traditions.</p>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 3,
+      tag: '03 • Science',
+      title: 'Scientific & Physiological Insights',
+      subtitle: 'Modern medicine and neuroscience perspectives',
+      icon: '🔬',
+      content: (
+        <div className="space-y-3 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div className="p-3 rounded-2xl bg-orange-50/50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900/40">
+              <strong className="text-orange-700 dark:text-orange-400 block mb-0.5">A. Stress Management</strong>
+              <p className="text-gray-600 dark:text-gray-300">Mantra repetition downregulates sympathetic stress responses and reduces circulating cortisol.</p>
+            </div>
+            <div className="p-3 rounded-2xl bg-orange-50/50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900/40">
+              <strong className="text-orange-700 dark:text-orange-400 block mb-0.5">B. Breath Regulation</strong>
+              <p className="text-gray-600 dark:text-gray-300">Pranayama stimulates the parasympathetic Vagus nerve, lowering blood pressure and stabilizing heart rate.</p>
+            </div>
+            <div className="p-3 rounded-2xl bg-orange-50/50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900/40">
+              <strong className="text-orange-700 dark:text-orange-400 block mb-0.5">C. Sustained Attention</strong>
+              <p className="text-gray-600 dark:text-gray-300">Gayatri acoustic vibrations produce EEG Alpha waves (8-12 Hz) associated with deep alert focus.</p>
+            </div>
+            <div className="p-3 rounded-2xl bg-orange-50/50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900/40">
+              <strong className="text-orange-700 dark:text-orange-400 block mb-0.5">D. Circadian Alignment</strong>
+              <p className="text-gray-600 dark:text-gray-300">Timing at solar junctures harmonizes the SCN biological clock, improving natural sleep cycles.</p>
+            </div>
+          </div>
+          <div className="p-3 rounded-xl bg-gray-50 dark:bg-brand-darkElevated border border-gray-100 dark:border-gray-800 text-[11px] text-gray-500">
+            <strong>Scientific Notice:</strong> Insights are synthesized from clinical research on meditation and breathwork. It should not be regarded as medical advice.
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 4,
+      tag: '04 • The Angas',
+      title: 'Core Ritual Angas (Steps)',
+      subtitle: 'The 6 primary pillars of the practice',
+      icon: '📿',
+      content: (
+        <div className="overflow-hidden rounded-2xl border border-orange-100 dark:border-gray-800">
+          <table className="w-full text-xs text-left">
+            <thead className="bg-orange-50 dark:bg-orange-950/40 text-orange-900 dark:text-orange-300 font-bold border-b border-orange-100">
+              <tr>
+                <th className="py-2.5 px-3">Ritual Step</th>
+                <th className="py-2.5 px-3">Traditional Significance</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-800 text-gray-700 dark:text-gray-300 bg-white dark:bg-brand-darkCard">
+              <tr>
+                <td className="py-2.5 px-3 font-bold text-orange-600">Ācamanam</td>
+                <td className="py-2.5 px-3">Sipping consecrated water for internal and speech purification.</td>
+              </tr>
+              <tr>
+                <td className="py-2.5 px-3 font-bold text-orange-600">Prāṇāyāma</td>
+                <td className="py-2.5 px-3">Controlled breath retention for mental and psychic equilibrium.</td>
+              </tr>
+              <tr>
+                <td className="py-2.5 px-3 font-bold text-orange-600">Saṅkalpa</td>
+                <td className="py-2.5 px-3">Solemn reaffirmation of spiritual purpose and divine surrender.</td>
+              </tr>
+              <tr>
+                <td className="py-2.5 px-3 font-bold text-orange-600">Arghya Pradānam</td>
+                <td className="py-2.5 px-3">Offering water oblations facing the solar deity.</td>
+              </tr>
+              <tr>
+                <td className="py-2.5 px-3 font-bold text-orange-600">Gāyatrī Japa</td>
+                <td className="py-2.5 px-3">Sacred meditative repetition for intellectual enlightenment.</td>
+              </tr>
+              <tr>
+                <td className="py-2.5 px-3 font-bold text-orange-600">Upasthānam</td>
+                <td className="py-2.5 px-3">Standing adoration to Surya Bhagavan as the cosmic light.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )
+    },
+    {
+      id: 5,
+      tag: '05 • Supreme Mantra',
+      title: 'The Gāyatrī Mahā Mantra',
+      subtitle: 'Mother of all Vedic revelations',
+      icon: '☀️',
+      content: (
+        <div className="space-y-4 text-center">
+          <div className="p-4 rounded-2xl bg-orange-50/60 dark:bg-orange-950/30 border border-orange-200/80 font-serif text-base sm:text-lg font-bold text-orange-700 dark:text-orange-400 leading-loose">
+            Oṃ Bhūr Bhuvaḥ Svaḥ <br />
+            Tat Savitur Vareṇyaṃ <br />
+            Bhargo Devasya Dhīmahi <br />
+            Dhiyo Yo Naḥ Pracodayāt ||
+          </div>
+          <div className="p-3.5 rounded-2xl bg-white dark:bg-brand-darkElevated border border-gray-100 text-xs text-left space-y-1">
+            <span className="font-bold text-orange-600 block">Meaning:</span>
+            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+              "We meditate on the transcendental glory of the Supreme Sun Creator. May that divine illumination inspire, guide, and illuminate our intellect toward righteousness."
+            </p>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 6,
+      tag: '06 • Research',
+      title: 'Scientific Research Evidence',
+      subtitle: 'PubMed-indexed clinical papers',
+      icon: '📑',
+      content: (
+        <div className="space-y-2.5 text-xs">
+          <p className="text-gray-600 dark:text-gray-400">
+            Peer-reviewed clinical studies evaluating mantra meditation and cognitive focus:
+          </p>
+          <div className="space-y-2">
+            <a
+              href="https://pubmed.ncbi.nlm.nih.gov/35329068/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-3 rounded-2xl bg-white dark:bg-brand-darkElevated border border-orange-100 dark:border-gray-800 hover:border-orange-300 transition-all flex items-center justify-between group shadow-sm"
+            >
+              <div>
+                <span className="font-bold text-orange-600 block">1. Mantra-Based Meditation & Mental Health (2022)</span>
+                <span className="text-[11px] text-gray-500">National Library of Medicine • PubMed: 35329068</span>
+              </div>
+              <ExternalLink className="w-4 h-4 text-orange-500 group-hover:translate-x-0.5 transition-transform shrink-0" />
+            </a>
+
+            <a
+              href="https://pubmed.ncbi.nlm.nih.gov/36329765/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-3 rounded-2xl bg-white dark:bg-brand-darkElevated border border-orange-100 dark:border-gray-800 hover:border-orange-300 transition-all flex items-center justify-between group shadow-sm"
+            >
+              <div>
+                <span className="font-bold text-orange-600 block">2. Mantra Meditation & Health Benefits (2022)</span>
+                <span className="text-[11px] text-gray-500">Systematic Review • PubMed: 36329765</span>
+              </div>
+              <ExternalLink className="w-4 h-4 text-orange-500 group-hover:translate-x-0.5 transition-transform shrink-0" />
+            </a>
+
+            <a
+              href="https://psvmkendra.com/index.php/journal/article/view/2020"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-3 rounded-2xl bg-white dark:bg-brand-darkElevated border border-orange-100 dark:border-gray-800 hover:border-orange-300 transition-all flex items-center justify-between group shadow-sm"
+            >
+              <div>
+                <span className="font-bold text-orange-600 block">3. Gayatri Mantra Chanting & Sustained Attention (2025)</span>
+                <span className="text-[11px] text-gray-500">Cognitive Neuro-Psychological Research</span>
+              </div>
+              <ExternalLink className="w-4 h-4 text-orange-500 group-hover:translate-x-0.5 transition-transform shrink-0" />
+            </a>
+          </div>
+          <p className="text-[10px] text-gray-400 italic">
+            *Research Transparency: These studies evaluate mantra meditation principles. Each study methodology should be evaluated independently.
+          </p>
+        </div>
+      )
+    },
+    {
+      id: 7,
+      tag: '07 • Resolution',
+      title: 'Final Contemplation & Resolve',
+      subtitle: 'Bridging heritage and scientific understanding',
+      icon: '🌟',
+      content: (
+        <div className="space-y-4 text-center py-2">
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-200 leading-relaxed">
+            Sandhyāvandanam is an extraordinary Vedic practice uniting sacred devotion with daily lifestyle discipline.
+          </p>
+          <div className="p-5 rounded-3xl bg-gradient-to-tr from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/25 space-y-2">
+            <Sparkles className="w-6 h-6 mx-auto text-orange-200" />
+            <h4 className="text-base font-extrabold font-display">
+              "Preserve Vedic Wisdom. Share Authentic Knowledge."
+            </h4>
+            <p className="text-xs text-orange-100">
+              Let us embrace both its spiritual purpose and its scientifically studied breathwork and cognitive meditation.
+            </p>
+          </div>
+        </div>
+      )
+    }
+  ],
+  sa: [
+    {
+      id: 1,
+      tag: '०१ • स्वरूपम्',
+      title: 'सन्ध्यावन्दनं किम्?',
+      subtitle: 'वैदिकपरम्परायां नित्यकर्म',
+      icon: '🌅',
+      content: (
+        <div className="space-y-4 text-sm leading-relaxed">
+          <p className="font-medium text-gray-700 dark:text-gray-200">
+            <strong>सन्ध्यावन्दनम्</strong> वैदिकपरम्परायां पुरुषार्थसाधकं <strong>नित्यकर्म</strong> अस्ति। "सन्ध्या" नाम कालद्वयस्य सङ्गमः — अहर्निशयोः सन्धिकालः।
+          </p>
+          <div className="bg-orange-50/70 dark:bg-orange-950/30 p-4 rounded-2xl border border-orange-100 dark:border-orange-900/40 space-y-2">
+            <p className="font-bold text-xs uppercase tracking-wider text-orange-600">त्रयः मुख्याः सन्ध्याकालाः:</p>
+            <ul className="space-y-1.5 text-xs text-gray-700 dark:text-gray-300">
+              <li>• <strong>१. प्रातः सन्ध्या</strong> – सूर्योदयात् प्राक्।</li>
+              <li>• <strong>२. माध्याह्निकम्</strong> – मध्याह्ने आकाशमध्ये सूर्ये स्थिते।</li>
+              <li>• <strong>३. सायं सन्ध्या</strong> – सूर्यास्तसमये।</li>
+            </ul>
+          </div>
+          <p className="text-xs text-gray-600 dark:text-gray-400">
+            अत्र सूर्योपासना, गायत्रीजपः, प्राणायामः, वेदमन्त्राश्च सम्भूय अनुष्ठीयन्ते।
+          </p>
+        </div>
+      )
+    },
+    {
+      id: 2,
+      tag: '०२ • आध्यात्मिकम्',
+      title: 'सन्ध्यावन्दनस्य आध्यात्मिक लाभाः',
+      subtitle: 'चित्तशुद्धिः एवं धर्मसंरक्षणम्',
+      icon: '🪔',
+      content: (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div className="p-3.5 rounded-2xl bg-white dark:bg-brand-darkElevated border border-orange-100 dark:border-gray-800 shadow-sm space-y-1">
+            <span className="font-extrabold text-orange-600">१. आध्यात्मिक नियमः</span>
+            <p className="text-gray-600 dark:text-gray-300">नियतकाले ईश्वराराधनेन जीवने स्थैर्यं नियमश्च संवर्धते।</p>
+          </div>
+          <div className="p-3.5 rounded-2xl bg-white dark:bg-brand-darkElevated border border-orange-100 dark:border-gray-800 shadow-sm space-y-1">
+            <span className="font-extrabold text-orange-600">२. गायत्री उपासना</span>
+            <p className="text-gray-600 dark:text-gray-300">गायत्रीमन्त्रः मेधायाः बुद्धेश्च सन्मार्गप्रेरणाय सर्वोच्चः वैदिकमन्त्रः।</p>
+          </div>
+          <div className="p-3.5 rounded-2xl bg-white dark:bg-brand-darkElevated border border-orange-100 dark:border-gray-800 shadow-sm space-y-1">
+            <span className="font-extrabold text-orange-600">३. चित्तैकाग्रता</span>
+            <p className="text-gray-600 dark:text-gray-300">जपेन ध्यानेन च मनसः चाञ्चल्यं शाम्यति, एकाग्रता च सिध्यति।</p>
+          </div>
+          <div className="p-3.5 rounded-2xl bg-white dark:bg-brand-darkElevated border border-orange-100 dark:border-gray-800 shadow-sm space-y-1">
+            <span className="font-extrabold text-orange-600">४. वेदपरम्परा-रक्षणम्</span>
+            <p className="text-gray-600 dark:text-gray-300">ऋषिपरम्परायाः अक्षुण्णं रक्षणं पोषणं च भवति।</p>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 3,
+      tag: '०३ • विज्ञानम्',
+      title: 'वैज्ञानिक-दृष्ट्या सम्भाविताः लाभाः',
+      subtitle: 'तन्त्रिकाविज्ञानम् एवं शरीरक्रियाशास्त्रम्',
+      icon: '🔬',
+      content: (
+        <div className="space-y-3 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div className="p-3 rounded-2xl bg-orange-50/50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900/40">
+              <strong className="text-orange-700 dark:text-orange-400 block mb-0.5">A. तनाव-नियमनम् (Stress)</strong>
+              <p className="text-gray-600 dark:text-gray-300">मन्त्रध्यानेन कोर्टिसोल-हार्मोन न्यूनं भवति, तनावश्च शाम्यति।</p>
+            </div>
+            <div className="p-3 rounded-2xl bg-orange-50/50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900/40">
+              <strong className="text-orange-700 dark:text-orange-400 block mb-0.5">B. श्वासनियन्त्रणम्</strong>
+              <p className="text-gray-600 dark:text-gray-300">प्राणायामेन वेगस-नाडी (Vagus nerve) प्रेरिता भूत्वा रक्तचापः समः भवति।</p>
+            </div>
+            <div className="p-3 rounded-2xl bg-orange-50/50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900/40">
+              <strong className="text-orange-700 dark:text-orange-400 block mb-0.5">C. अवधान-शक्तिः (Attention)</strong>
+              <p className="text-gray-600 dark:text-gray-300">ध्वनिकम्पनेन मस्तिष्के अल्फा-तरङ्गाः जायन्ते येन एकाग्रता वर्धते।</p>
+            </div>
+            <div className="p-3 rounded-2xl bg-orange-50/50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900/40">
+              <strong className="text-orange-700 dark:text-orange-400 block mb-0.5">D. दिनचर्या-नियमः</strong>
+              <p className="text-gray-600 dark:text-gray-300">सन्ध्याकाले अनुष्ठानेन शरीरस्य जैविक-घटिका सन्तुलिता भवति।</p>
+            </div>
+          </div>
+          <div className="p-3 rounded-xl bg-gray-50 dark:bg-brand-darkElevated border border-gray-100 dark:border-gray-800 text-[11px] text-gray-500">
+            <strong>वैज्ञानिक-टिप्पणी:</strong> एते लाभाः प्राणायाम-मन्त्रध्यान-शोधैः प्राप्ताः। नैतद् सम्पूर्णं चिकित्सारूपम्।
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 4,
+      tag: '०४ • मुख्याङ्गानि',
+      title: 'सन्ध्यावन्दनस्य मुख्याङ्गानि',
+      subtitle: 'अनुष्ठानक्रमः तन्महत्त्वं च',
+      icon: '📿',
+      content: (
+        <div className="overflow-hidden rounded-2xl border border-orange-100 dark:border-gray-800">
+          <table className="w-full text-xs text-left">
+            <thead className="bg-orange-50 dark:bg-orange-950/40 text-orange-900 dark:text-orange-300 font-bold border-b border-orange-100">
+              <tr>
+                <th className="py-2.5 px-3">अनुष्ठानम्</th>
+                <th className="py-2.5 px-3">पारम्परिक महत्त्वम्</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-800 text-gray-700 dark:text-gray-300 bg-white dark:bg-brand-darkCard">
+              <tr>
+                <td className="py-2.5 px-3 font-bold text-orange-600">आचमनम्</td>
+                <td className="py-2.5 px-3">अन्तःकरणशुद्धिः देहशुद्धिश्च।</td>
+              </tr>
+              <tr>
+                <td className="py-2.5 px-3 font-bold text-orange-600">प्राणायामः</td>
+                <td className="py-2.5 px-3">प्राणसंयमः चित्तैकाग्रता च।</td>
+              </tr>
+              <tr>
+                <td className="py-2.5 px-3 font-bold text-orange-600">सङ्कल्पः</td>
+                <td className="py-2.5 px-3">कर्तव्यनिश्चयः ईश्वरार्पणबुद्धिश्च।</td>
+              </tr>
+              <tr>
+                <td className="py-2.5 px-3 font-bold text-orange-600">अर्घ्यप्रदानम्</td>
+                <td className="py-2.5 px-3">सूर्याय जलसमर्पणम्।</td>
+              </tr>
+              <tr>
+                <td className="py-2.5 px-3 font-bold text-orange-600">गायत्रीजपः</td>
+                <td className="py-2.5 px-3">बुद्धिप्रेरणाय परमात्मनः ध्यानम्।</td>
+              </tr>
+              <tr>
+                <td className="py-2.5 px-3 font-bold text-orange-600">उपस्थानम्</td>
+                <td className="py-2.5 px-3">प्रत्यक्षदेवस्य सूर्यस्य अभिवन्दनम्।</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )
+    },
+    {
+      id: 5,
+      tag: '०५ • महामन्त्रः',
+      title: 'श्री गायत्री महामन्त्रः',
+      subtitle: 'वेदानां जननी मन्त्रराजः',
+      icon: '☀️',
+      content: (
+        <div className="space-y-4 text-center">
+          <div className="p-4 rounded-2xl bg-orange-50/60 dark:bg-orange-950/30 border border-orange-200/80 font-serif text-base sm:text-lg font-bold text-orange-700 dark:text-orange-400 leading-loose">
+            ॐ भूर्भुवः स्वः । <br />
+            तत्सवितुर्वरेण्यं । <br />
+            भर्गो देवस्य धीमहि । <br />
+            धियो यो नः प्रचोदयात् ॥
+          </div>
+          <div className="p-3.5 rounded-2xl bg-white dark:bg-brand-darkElevated border border-gray-100 text-xs text-left space-y-1">
+            <span className="font-bold text-orange-600 block">भावार्थः:</span>
+            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+              "वयं तस्य सवितुर्देवस्य श्रेष्ठं पापनाशकं दिव्यं तेजः ध्यायामः, यः अस्माकं बुद्धीः सन्मार्गे प्रेरयेत्।"
+            </p>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 6,
+      tag: '०६ • शोधाः',
+      title: 'वैज्ञानिक-अनुसन्धान-प्रमाणानि (PubMed)',
+      subtitle: 'शोधपत्रिकाप्रकाशितानि प्रमाणानि',
+      icon: '📑',
+      content: (
+        <div className="space-y-2.5 text-xs">
+          <p className="text-gray-600 dark:text-gray-400">
+            मन्त्रध्यानस्य शारीरिक-मानसिक-प्रभावानां शोधप्रमाणानि:
+          </p>
+          <div className="space-y-2">
+            <a
+              href="https://pubmed.ncbi.nlm.nih.gov/35329068/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-3 rounded-2xl bg-white dark:bg-brand-darkElevated border border-orange-100 dark:border-gray-800 hover:border-orange-300 transition-all flex items-center justify-between group shadow-sm"
+            >
+              <div>
+                <span className="font-bold text-orange-600 block">1. Mantra-Based Meditation and Mental Health (2022)</span>
+                <span className="text-[11px] text-gray-500">PubMed: 35329068</span>
+              </div>
+              <ExternalLink className="w-4 h-4 text-orange-500 group-hover:translate-x-0.5 transition-transform shrink-0" />
+            </a>
+
+            <a
+              href="https://pubmed.ncbi.nlm.nih.gov/36329765/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-3 rounded-2xl bg-white dark:bg-brand-darkElevated border border-orange-100 dark:border-gray-800 hover:border-orange-300 transition-all flex items-center justify-between group shadow-sm"
+            >
+              <div>
+                <span className="font-bold text-orange-600 block">2. Mantra Meditation and Health Benefits (2022)</span>
+                <span className="text-[11px] text-gray-500">PubMed: 36329765</span>
+              </div>
+              <ExternalLink className="w-4 h-4 text-orange-500 group-hover:translate-x-0.5 transition-transform shrink-0" />
+            </a>
+
+            <a
+              href="https://psvmkendra.com/index.php/journal/article/view/2020"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-3 rounded-2xl bg-white dark:bg-brand-darkElevated border border-orange-100 dark:border-gray-800 hover:border-orange-300 transition-all flex items-center justify-between group shadow-sm"
+            >
+              <div>
+                <span className="font-bold text-orange-600 block">3. Gayatri Mantra Chanting and Sustained Attention (2025)</span>
+                <span className="text-[11px] text-gray-500">Neuro-Psychological Journal</span>
+              </div>
+              <ExternalLink className="w-4 h-4 text-orange-500 group-hover:translate-x-0.5 transition-transform shrink-0" />
+            </a>
+          </div>
+          <p className="text-[10px] text-gray-400 italic">
+            *शोधपारदर्शिता: एते शोधाः मन्त्रध्यानप्रभावानां विश्लेषणं कुर्वन्ति।
+          </p>
+        </div>
+      )
+    },
+    {
+      id: 7,
+      tag: '०७ • संकल्पः',
+      title: 'अन्तिम-विचारः & सङ्कल्पः',
+      subtitle: 'परम्परा-विज्ञानयोः समन्वयः',
+      icon: '🌟',
+      content: (
+        <div className="space-y-4 text-center py-2">
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-200 leading-relaxed">
+            सन्ध्यावन्दनं नाम वैदिकपरम्परायां आध्यात्मिकनियमस्य ईश्वरोपासनायाश्च परमं समन्वयम्।
+          </p>
+          <div className="p-5 rounded-3xl bg-gradient-to-tr from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/25 space-y-2">
+            <Sparkles className="w-6 h-6 mx-auto text-orange-200" />
+            <h4 className="text-base font-extrabold font-display">
+              "वेदज्ञानं संरक्षामः । सत्यं ज्ञानं प्रसारयामः ॥"
+            </h4>
+            <p className="text-xs text-orange-100">
+              पारम्परिकं प्रयोजनं ज्ञात्वा, प्राणायाम-मन्त्रध्यान-सम्बन्धितान् वैज्ञानिक-लाभांश्च अवबुध्य नित्यं समनुष्ठातव्यम्।
+            </p>
+          </div>
+        </div>
+      )
+    }
+  ]
 };
 
 export const WisdomPage: React.FC = () => {
   const [lang, setLang] = useState<Language>('ta');
-  const [activeCategory, setActiveCategory] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [copiedMantra, setCopiedMantra] = useState(false);
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  const [viewMode, setViewMode] = useState<'flashcards' | 'full'>('flashcards');
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
 
-  const t = CONTENT[lang];
+  const cards = FLASHCARDS[lang];
+  const currentCard = cards[currentCardIndex];
 
-  const handleCopyGayatri = () => {
-    navigator.clipboard.writeText(t.gayatriSub);
-    setCopiedMantra(true);
-    setTimeout(() => setCopiedMantra(false), 2000);
+  const handleNext = () => {
+    setCurrentCardIndex((prev) => (prev + 1) % cards.length);
+  };
+
+  const handlePrev = () => {
+    setCurrentCardIndex((prev) => (prev - 1 + cards.length) % cards.length);
+  };
+
+  const handleShuffle = () => {
+    const randomIndex = Math.floor(Math.random() * cards.length);
+    setCurrentCardIndex(randomIndex);
   };
 
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: t.heroTitle,
-        text: `${t.heroTitle} — ${t.heroSubtitle}\n\n${t.gayatriSub}`,
+        title: currentCard.title,
+        text: `SANDHYĀ — ${currentCard.title}: ${currentCard.subtitle}`,
         url: window.location.href,
       });
-    } else {
-      handleCopyGayatri();
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#FBFBFB] dark:bg-brand-darkBg text-[#1C1917] dark:text-gray-100 p-4 md:p-8 space-y-6 max-w-4xl mx-auto pb-28 font-sans">
+    <div className="min-h-screen bg-[#FBFBFB] dark:bg-brand-darkBg text-[#1C1917] dark:text-gray-100 p-4 md:p-8 space-y-6 max-w-xl mx-auto pb-28 font-sans">
       
-      {/* ── Top Bar: Header & 3-Way Language Switcher ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
+      {/* ── Top Bar: Title & 3-Way Language Switcher ── */}
+      <div className="flex items-center justify-between pt-1">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-50 dark:bg-orange-950/40 border border-orange-200/80 dark:border-orange-900/50 text-orange-600 dark:text-orange-400 text-xs font-semibold tracking-wide mb-1">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-50 dark:bg-orange-950/40 border border-orange-200/80 dark:border-orange-900/50 text-orange-600 dark:text-orange-400 text-[10px] font-extrabold uppercase tracking-wide mb-1">
             <Sparkles className="w-3.5 h-3.5 text-orange-500" />
-            <span>{t.heroTag}</span>
+            <span>சந்தியா ஞானம் • Wisdom</span>
           </div>
-          <h1 className="text-3xl font-display font-extrabold text-[#191815] dark:text-white tracking-tight">
-            {t.heroTitle}
+          <h1 className="text-2xl font-display font-extrabold text-[#191815] dark:text-white tracking-tight">
+            சந்தியா ஞானம்
           </h1>
-        </div>
-
-        {/* Language Switcher Capsule */}
-        <div className="inline-flex p-1 bg-white dark:bg-brand-darkElevated rounded-2xl shadow-sm border border-orange-100 dark:border-gray-800 self-start sm:self-auto">
-          <button
-            onClick={() => setLang('ta')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              lang === 'ta'
-                ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-sm shadow-orange-500/30'
-                : 'text-gray-600 dark:text-gray-400 hover:text-orange-600'
-            }`}
-          >
-            தமிழ்
-          </button>
-          <button
-            onClick={() => setLang('en')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              lang === 'en'
-                ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-sm shadow-orange-500/30'
-                : 'text-gray-600 dark:text-gray-400 hover:text-orange-600'
-            }`}
-          >
-            English
-          </button>
-          <button
-            onClick={() => setLang('sa')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              lang === 'sa'
-                ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-sm shadow-orange-500/30'
-                : 'text-gray-600 dark:text-gray-400 hover:text-orange-600'
-            }`}
-          >
-            संस्कृतम्
-          </button>
-        </div>
-      </div>
-
-      {/* ── Search Bar ── */}
-      <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <Search className="h-4 w-4 text-orange-400" />
-        </div>
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder={t.searchPlaceholder}
-          className="w-full pl-11 pr-4 py-3.5 bg-white dark:bg-brand-darkCard border border-orange-100/80 dark:border-gray-800 rounded-2xl text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500 transition-all"
-        />
-        {searchQuery && (
-          <button
-            onClick={() => setSearchQuery('')}
-            className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-xs text-gray-400 hover:text-gray-600"
-          >
-            Clear
-          </button>
-        )}
-      </div>
-
-      {/* ── Category Chips ── */}
-      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
-        {t.categories.map((cat) => (
-          <button
-            key={cat.id}
-            onClick={() => setActiveCategory(cat.id)}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all ${
-              activeCategory === cat.id
-                ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/25'
-                : 'bg-white dark:bg-brand-darkCard text-gray-600 dark:text-gray-300 border border-gray-100 dark:border-gray-800 hover:border-orange-200 hover:text-orange-600'
-            }`}
-          >
-            <span>{cat.emoji}</span>
-            <span>{cat.label}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* ── Hero Quote Card (White with Orange Ambient Glow) ── */}
-      <div className="relative overflow-hidden rounded-3xl bg-white dark:bg-brand-darkCard p-6 border border-orange-100/70 dark:border-gray-800 shadow-[0_4px_24px_rgba(255,107,0,0.06)]">
-        <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-orange-100/50 dark:bg-orange-950/20 rounded-full blur-2xl pointer-events-none" />
-        <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="space-y-2">
-            <span className="text-[11px] font-extrabold uppercase tracking-widest text-orange-600 flex items-center gap-1.5">
-              <span>✦</span> {t.quoteTitle}
-            </span>
-            <p className="text-lg md:text-xl font-medium text-[#1A1816] dark:text-gray-100 leading-relaxed italic">
-              "{t.quotes[0]}"
-            </p>
-          </div>
-          <button
-            onClick={handleShare}
-            className="shrink-0 flex items-center gap-2 px-4 py-2.5 bg-orange-50 dark:bg-orange-950/40 hover:bg-orange-100 text-orange-600 dark:text-orange-400 rounded-2xl text-xs font-bold transition-all active:scale-95 border border-orange-200/60"
-          >
-            <Share2 className="w-3.5 h-3.5" />
-            <span>Share</span>
-          </button>
-        </div>
-      </div>
-
-      {/* ── SECTION: Scientific & Physiological Benefits (Highlight) ── */}
-      {(activeCategory === 'all' || activeCategory === 'science') && (
-        <section className="space-y-4 pt-2">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-orange-500" />
-                <h2 className="text-xl font-display font-extrabold text-[#191815] dark:text-white">
-                  {t.scienceTitle}
-                </h2>
-              </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                {t.scienceSubtitle}
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {t.scientificBenefits.map((item, idx) => (
-              <div
-                key={idx}
-                className="bg-white dark:bg-brand-darkCard rounded-3xl p-5 border border-orange-100/80 dark:border-gray-800 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 border border-orange-200/60">
-                      {item.tag}
-                    </span>
-                    <div className="w-8 h-8 rounded-full bg-orange-50 dark:bg-orange-950/40 text-orange-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      {idx === 0 && <Brain className="w-4 h-4" />}
-                      {idx === 1 && <Activity className="w-4 h-4" />}
-                      {idx === 2 && <Clock className="w-4 h-4" />}
-                      {idx === 3 && <ShieldCheck className="w-4 h-4" />}
-                      {idx === 4 && <Sun className="w-4 h-4" />}
-                      {idx === 5 && <Compass className="w-4 h-4" />}
-                    </div>
-                  </div>
-
-                  <h3 className="font-display font-bold text-base text-[#191815] dark:text-white group-hover:text-orange-600 transition-colors">
-                    {item.title}
-                  </h3>
-                  <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
-                    {item.desc}
-                  </p>
-                </div>
-
-                <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800/60 flex items-center gap-1.5 text-[11px] font-semibold text-orange-600 dark:text-orange-400">
-                  <Sparkles className="w-3.5 h-3.5 shrink-0" />
-                  <span>{item.stat}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* ── SECTION: What is Sandhyavandanam (Basics) ── */}
-      {(activeCategory === 'all' || activeCategory === 'basics') && (
-        <section className="bg-white dark:bg-brand-darkCard rounded-3xl p-6 border border-orange-100/80 dark:border-gray-800 shadow-sm space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-full bg-orange-500" />
-            <h2 className="text-xl font-display font-extrabold text-[#191815] dark:text-white">
-              {t.basicsTitle}
-            </h2>
-          </div>
-          <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-            {t.basicsDesc}
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            ஆன்மீக அறிவும் அறிவியல் உண்மைகளும்
           </p>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
-            {t.times.map((item, idx) => (
-              <div
-                key={idx}
-                className="bg-orange-50/40 dark:bg-brand-darkElevated/60 rounded-2xl p-4 border border-orange-100 dark:border-gray-800 space-y-2"
-              >
-                <div className="flex items-center gap-2 text-orange-600 font-bold text-xs uppercase tracking-wide">
-                  {idx === 0 && <Sunrise className="w-4 h-4" />}
-                  {idx === 1 && <Sun className="w-4 h-4" />}
-                  {idx === 2 && <Sunset className="w-4 h-4" />}
-                  <span>{item.name}</span>
-                </div>
-                <p className="text-xs font-semibold text-gray-700 dark:text-gray-200">
-                  {item.time}
-                </p>
-                <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-snug">
-                  {item.meaning}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* ── SECTION: The 10 Core Steps (Angas) ── */}
-      {(activeCategory === 'all' || activeCategory === 'steps') && (
-        <section className="space-y-4 pt-2">
-          <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-full bg-orange-500" />
-            <h2 className="text-xl font-display font-extrabold text-[#191815] dark:text-white">
-              {t.angasTitle}
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {t.angas.map((step) => (
-              <div
-                key={step.num}
-                className="bg-white dark:bg-brand-darkCard rounded-2xl p-4 border border-gray-100 dark:border-gray-800 shadow-sm flex items-start gap-3.5 hover:border-orange-200 transition-colors"
-              >
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 shadow-sm shadow-orange-500/20">
-                  {step.num}
-                </div>
-                <div className="space-y-1">
-                  <h4 className="text-sm font-bold text-[#191815] dark:text-white">
-                    {step.title}
-                  </h4>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
-                    {step.desc}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* ── SECTION: Supreme Gayatri Mantra Card ── */}
-      {(activeCategory === 'all' || activeCategory === 'gayatri') && (
-        <section className="bg-gradient-to-br from-white via-orange-50/20 to-white dark:from-brand-darkCard dark:to-brand-darkElevated rounded-3xl p-6 border-2 border-orange-200/80 dark:border-orange-900/40 shadow-md space-y-5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-xl">☀️</span>
-              <h2 className="text-xl font-display font-extrabold text-[#191815] dark:text-white">
-                {t.gayatriTitle}
-              </h2>
-            </div>
+        {/* Language Capsule */}
+        <div className="inline-flex p-1 bg-white dark:bg-brand-darkElevated rounded-2xl shadow-sm border border-orange-100">
+          {(['ta', 'en', 'sa'] as Language[]).map((l) => (
             <button
-              onClick={handleCopyGayatri}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold shadow-sm active:scale-95 transition-all"
+              key={l}
+              onClick={() => setLang(l)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                lang === l
+                  ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-sm shadow-orange-500/30'
+                  : 'text-gray-500 hover:text-orange-600'
+              }`}
             >
-              {copiedMantra ? <Check className="w-3.5 h-3.5 text-white" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copiedMantra ? 'Copied' : 'Copy Mantra'}</span>
+              {l === 'ta' ? 'தமிழ்' : l === 'en' ? 'EN' : 'संस्कृतम्'}
             </button>
-          </div>
+          ))}
+        </div>
+      </div>
 
-          <div className="p-5 rounded-2xl bg-white dark:bg-brand-darkCard border border-orange-100 dark:border-gray-800 text-center shadow-inner">
-            <p className="font-serif text-lg md:text-xl font-bold text-orange-600 dark:text-orange-400 tracking-wide leading-loose">
-              {t.gayatriSub}
-            </p>
-          </div>
+      {/* ── View Mode Switcher Capsule (Flashcards vs Full View) ── */}
+      <div className="flex items-center justify-between p-1 bg-white dark:bg-brand-darkCard rounded-2xl border border-orange-100 dark:border-gray-800 shadow-sm">
+        <button
+          onClick={() => setViewMode('flashcards')}
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all ${
+            viewMode === 'flashcards'
+              ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/25'
+              : 'text-gray-500 hover:text-orange-600'
+          }`}
+        >
+          <Layers className="w-3.5 h-3.5" />
+          <span>கற்றல் அட்டைகள் (Flashcards)</span>
+        </button>
+        <button
+          onClick={() => setViewMode('full')}
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all ${
+            viewMode === 'full'
+              ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/25'
+              : 'text-gray-500 hover:text-orange-600'
+          }`}
+        >
+          <FileText className="w-3.5 h-3.5" />
+          <span>முழுப் பார்வை (Full View)</span>
+        </button>
+      </div>
 
-          {/* Word by Word Meaning Grid */}
-          <div className="space-y-2">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-              பதவுரை & சொல்லின் பொருள் (Word by Word)
-            </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {t.gayatriWordMeaning.map((w, idx) => (
-                <div
-                  key={idx}
-                  className="p-2.5 rounded-xl bg-white dark:bg-brand-darkCard border border-gray-100 dark:border-gray-800 text-xs flex items-center justify-between"
-                >
-                  <span className="font-bold text-orange-600 dark:text-orange-400">{w.word}</span>
-                  <span className="text-gray-600 dark:text-gray-300 text-right">{w.mean}</span>
-                </div>
+      {/* ── MODE 1: INTERACTIVE FLASHCARDS ── */}
+      {viewMode === 'flashcards' && (
+        <div className="space-y-4">
+          
+          {/* Card Progress Indicator */}
+          <div className="flex items-center justify-between text-xs font-bold text-gray-500">
+            <span className="flex items-center gap-1.5 text-orange-600">
+              <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+              அட்டை {currentCardIndex + 1} / {cards.length}
+            </span>
+            <div className="flex gap-1">
+              {cards.map((c, i) => (
+                <button
+                  key={c.id}
+                  onClick={() => setCurrentCardIndex(i)}
+                  className={`w-2.5 h-2.5 rounded-full transition-all ${
+                    currentCardIndex === i
+                      ? 'bg-orange-500 w-6'
+                      : 'bg-gray-200 dark:bg-gray-700 hover:bg-orange-200'
+                  }`}
+                  aria-label={`Go to card ${i + 1}`}
+                />
               ))}
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-orange-50 dark:bg-orange-950/30 border border-orange-200/60 dark:border-orange-900/40 text-xs font-medium text-orange-950 dark:text-orange-200 leading-relaxed">
-            {t.gayatriSummary}
-          </div>
-        </section>
-      )}
-
-      {/* ── SECTION: Frequently Asked Questions ── */}
-      {(activeCategory === 'all' || activeCategory === 'faq') && (
-        <section className="bg-white dark:bg-brand-darkCard rounded-3xl p-6 border border-orange-100/80 dark:border-gray-800 shadow-sm space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-full bg-orange-500" />
-            <h2 className="text-xl font-display font-extrabold text-[#191815] dark:text-white">
-              {t.categories.find(c => c.id === 'faq')?.label || 'FAQ'}
-            </h2>
-          </div>
-
-          <div className="divide-y divide-gray-100 dark:divide-gray-800">
-            {t.faqs.map((faq, idx) => {
-              const isOpen = openFaqIndex === idx;
-              return (
-                <div key={idx} className="py-3">
-                  <button
-                    onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
-                    className="w-full flex items-center justify-between text-left gap-3 group"
-                  >
-                    <span className="font-bold text-sm text-[#191815] dark:text-white group-hover:text-orange-600 transition-colors">
-                      {faq.q}
-                    </span>
-                    <div className="w-6 h-6 rounded-full bg-orange-50 dark:bg-orange-950/40 text-orange-500 flex items-center justify-center shrink-0">
-                      {isOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                    </div>
-                  </button>
-                  <AnimatePresence>
-                    {isOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="pt-2 text-xs text-gray-600 dark:text-gray-400 leading-relaxed"
-                      >
-                        {faq.a}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+          {/* Flashcard Component */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentCard.id}
+              initial={{ opacity: 0, scale: 0.96, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: -12 }}
+              transition={{ duration: 0.22, ease: 'easeOut' }}
+              className="bg-white dark:bg-brand-darkCard rounded-3xl p-6 sm:p-7 border-2 border-orange-100/90 dark:border-gray-800 shadow-[0_10px_35px_rgba(255,107,0,0.06)] space-y-5 min-h-[380px] flex flex-col justify-between"
+            >
+              <div className="space-y-3.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full bg-orange-50 text-orange-600 border border-orange-200/60">
+                    {currentCard.tag}
+                  </span>
+                  <span className="text-2xl">{currentCard.icon}</span>
                 </div>
-              );
-            })}
+
+                <div>
+                  <h2 className="text-xl font-display font-extrabold text-[#191815] dark:text-white leading-snug">
+                    {currentCard.title}
+                  </h2>
+                  <p className="text-xs text-orange-600 dark:text-orange-400 font-semibold mt-0.5">
+                    {currentCard.subtitle}
+                  </p>
+                </div>
+
+                {/* Main Card Content */}
+                <div className="pt-1">
+                  {currentCard.content}
+                </div>
+              </div>
+
+              {/* Card Footer Actions */}
+              <div className="pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={handleShuffle}
+                    className="p-2 rounded-xl bg-orange-50 text-orange-600 hover:bg-orange-100 transition-colors text-xs font-bold flex items-center gap-1"
+                    title="Shuffle"
+                  >
+                    <Shuffle className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={handleShare}
+                    className="p-2 rounded-xl bg-gray-50 dark:bg-brand-darkElevated text-gray-600 hover:text-orange-600 transition-colors text-xs font-bold flex items-center gap-1"
+                    title="Share"
+                  >
+                    <Share2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                {/* Navigation Pill Buttons */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handlePrev}
+                    className="p-2.5 rounded-2xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-orange-100 active:scale-95 transition-all"
+                    aria-label="Previous Card"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={handleNext}
+                    className="flex items-center gap-1 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold text-xs shadow-md shadow-orange-500/25 active:scale-95 transition-all"
+                  >
+                    <span>அடுத்தது</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Quick Jump Grid of All Cards */}
+          <div className="grid grid-cols-4 sm:grid-cols-7 gap-2 pt-2">
+            {cards.map((c, idx) => (
+              <button
+                key={c.id}
+                onClick={() => setCurrentCardIndex(idx)}
+                className={`py-2 px-1.5 rounded-2xl text-[11px] font-bold text-center border transition-all ${
+                  currentCardIndex === idx
+                    ? 'bg-orange-500 text-white border-orange-500 shadow-sm shadow-orange-500/25'
+                    : 'bg-white dark:bg-brand-darkCard text-gray-600 border-gray-100 hover:border-orange-200'
+                }`}
+              >
+                <div className="text-base mb-0.5">{c.icon}</div>
+                <span className="truncate block">0{c.id}</span>
+              </button>
+            ))}
           </div>
-        </section>
+
+        </div>
       )}
 
-      {/* ── Footer Disclaimer Card ── */}
-      <div className="p-4 rounded-2xl bg-gray-50 dark:bg-brand-darkElevated border border-gray-100 dark:border-gray-800 text-[11px] text-gray-500 dark:text-gray-400 flex items-start gap-2.5">
-        <ShieldCheck className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" />
-        <p>
-          <strong className="text-gray-700 dark:text-gray-300">{t.disclaimerTitle}:</strong> {t.disclaimerText}
+      {/* ── MODE 2: COMPLETE LIST VIEW ── */}
+      {viewMode === 'full' && (
+        <div className="space-y-6 animate-fade-in">
+          {cards.map((card) => (
+            <div
+              key={card.id}
+              className="bg-white dark:bg-brand-darkCard rounded-3xl p-6 border border-orange-100/80 dark:border-gray-800 shadow-sm space-y-4"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full bg-orange-50 text-orange-600 border border-orange-200/60">
+                  {card.tag}
+                </span>
+                <span className="text-xl">{card.icon}</span>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-display font-extrabold text-[#191815] dark:text-white">
+                  {card.title}
+                </h3>
+                <p className="text-xs text-orange-600 font-semibold">
+                  {card.subtitle}
+                </p>
+              </div>
+
+              <div>
+                {card.content}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ── Bottom Research Transparency Footer ── */}
+      <div className="p-4 rounded-3xl bg-white dark:bg-brand-darkCard border border-orange-100 dark:border-gray-800 shadow-sm text-xs text-gray-500 space-y-1.5">
+        <div className="flex items-center gap-1.5 text-orange-600 font-bold">
+          <ShieldCheck className="w-4 h-4" />
+          <span>ஆராய்ச்சி வெளிப்படைத்தன்மை & மரபு</span>
+        </div>
+        <p className="text-[11px] leading-relaxed">
+          சந்தியாவந்தனம் என்பது ஆன்மீக ஒழுக்கம், பிராணாயாம மூச்சுப்பயிற்சி மற்றும் காயத்ரி தியானத்தை ஒருங்கிணைக்கும் புனித வேத அனுஷ்டானமாகும்.
         </p>
       </div>
 
