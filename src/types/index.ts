@@ -15,6 +15,7 @@ export interface User {
   pravara?: string;
   location?: string;
   dailyGoal?: number;
+  phone?: string;
 }
 
 export interface Session {

@@ -63,10 +63,12 @@ const ScrollToTop = () => {
 
 function App() {
   useEffect(() => {
-    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    // Default to clean Orange & White theme unless explicitly set to dark
+    if (localStorage.theme === 'dark') {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
+      localStorage.theme = 'light';
     }
   }, []);
 

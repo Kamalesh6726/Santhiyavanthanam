@@ -66,16 +66,16 @@ export const Home: React.FC = () => {
   return (
     <div className="max-w-xl mx-auto space-y-8 p-4 md:p-0">
       {/* Header */}
-      <header className="pt-4 pb-2 space-y-2">
-        <p className="text-sm font-semibold tracking-widest text-brand-saffron uppercase">
+      <header className="pt-4 pb-2 space-y-1">
+        <p className="text-xs font-extrabold tracking-widest text-orange-600 uppercase">
           {format(new Date(), 'EEEE, MMMM d')}
         </p>
         {userLoading || !userData ? (
-          <div className="h-10 bg-gray-200 dark:bg-gray-800 rounded-md w-3/4 animate-pulse"></div>
+          <div className="h-10 bg-orange-50 rounded-2xl w-3/4 animate-pulse"></div>
         ) : (
-          <h1 className="text-4xl font-display font-bold text-brand-primary dark:text-brand-darkPrimaryText tracking-tight">
+          <h1 className="text-3xl font-display font-extrabold text-[#191815] tracking-tight">
             Good morning, <br className="md:hidden" />
-            <span className="text-brand-saffron">{userData.name?.split(' ')[0] || 'Friend'}.</span>
+            <span className="text-orange-600">{userData.name?.split(' ')[0] || 'Friend'}.</span>
           </h1>
         )}
       </header>

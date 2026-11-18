@@ -9,7 +9,7 @@ export const AppLayout: React.FC = () => {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen bg-brand-background dark:bg-brand-darkBg flex">
+    <div className="min-h-screen bg-[#FAF9F6] text-[#191815] flex">
       {/* Desktop Sidebar */}
       <Sidebar />
       

@@ -3,7 +3,6 @@ import { startOfWeek, addDays, format, isSameDay, isFuture } from 'date-fns';
 import { Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useWeeklySessions } from '../../hooks/useFirebaseData';
-import { Card } from '../ui/Card';
 
 export const WeeklyTracker: React.FC = () => {
   const today = new Date();
@@ -24,7 +23,7 @@ export const WeeklyTracker: React.FC = () => {
   };
 
   return (
-    <Card className="p-6 bg-white dark:bg-brand-darkCard border-0">
+    <div className="p-6 bg-white rounded-3xl border border-orange-100 shadow-[0_4px_20px_rgba(255,107,0,0.04)]">
       <div className="flex justify-between relative z-10">
         {weekDays.map((date, index) => {
           const dateStr = format(date, 'yyyy-MM-dd');
@@ -34,18 +33,18 @@ export const WeeklyTracker: React.FC = () => {
           
           return (
             <div key={index} className="flex flex-col items-center">
-              <span className="text-xs font-medium text-gray-400 mb-3">
+              <span className={`text-xs font-bold mb-3 ${isToday ? 'text-orange-600 font-extrabold' : 'text-gray-400'}`}>
                 {format(date, 'EEEEE')}
               </span>
               
               <div className="relative">
                 {/* Connection Line */}
                 {index !== 0 && (
-                  <div className="absolute top-1/2 -left-full w-full h-0.5 bg-gray-100 dark:bg-gray-800 -z-10 -translate-y-1/2"></div>
+                  <div className="absolute top-1/2 -left-full w-full h-0.5 bg-orange-100 -z-10 -translate-y-1/2"></div>
                 )}
                 
                 {loading ? (
-                  <div className="w-[36px] h-[36px] rounded-full bg-gray-100 dark:bg-gray-800 animate-pulse"></div>
+                  <div className="w-[36px] h-[36px] rounded-full bg-orange-50 animate-pulse"></div>
                 ) : (
                   <motion.div 
                     initial={{ scale: 0.8, opacity: 0 }}
@@ -53,12 +52,12 @@ export const WeeklyTracker: React.FC = () => {
                     transition={{ delay: index * 0.05 }}
                     className={`w-[36px] h-[36px] rounded-full flex items-center justify-center transition-all ${
                       perfect 
-                        ? 'bg-brand-saffron text-white shadow-sm' 
+                        ? 'bg-gradient-to-tr from-orange-500 to-orange-600 text-white shadow-md shadow-orange-500/30' 
                         : isToday 
-                          ? 'bg-transparent border-2 border-brand-saffron text-brand-saffron'
+                          ? 'bg-orange-50/50 border-2 border-orange-500 text-orange-600 font-bold'
                           : future
-                            ? 'bg-transparent border border-dashed border-gray-200 dark:border-gray-800 text-transparent'
-                            : 'bg-brand-sand/30 dark:bg-gray-800/50 text-transparent'
+                            ? 'bg-transparent border border-dashed border-gray-200 text-transparent'
+                            : 'bg-orange-50/60 border border-orange-100 text-transparent'
                     }`}
                   >
                     {perfect && <Check size={18} strokeWidth={3} />}
@@ -69,6 +68,6 @@ export const WeeklyTracker: React.FC = () => {
           );
         })}
       </div>
-    </Card>
+    </div>
   );
 };

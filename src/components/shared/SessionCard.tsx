@@ -1,6 +1,4 @@
 import React from 'react';
-import { Card } from '../ui/Card';
-import { Button } from '../ui/Button';
 import { Check, Clock } from 'lucide-react';
 import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,20 +19,25 @@ export const SessionCard: React.FC<SessionCardProps> = ({
   onComplete,
 }) => {
   return (
-    <Card className="flex flex-col space-y-4">
+    <div className="bg-white rounded-3xl p-6 border-2 border-orange-100/90 shadow-[0_4px_24px_rgba(255,107,0,0.04)] flex flex-col space-y-4">
       <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-3">
-          <span className="text-2xl">{icon}</span>
-          <h3 className="font-display font-semibold text-lg">{title}</h3>
+        <div className="flex items-center space-x-3.5">
+          <div className="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center text-2xl border border-orange-100 shrink-0">
+            {icon}
+          </div>
+          <div>
+            <h3 className="font-display font-extrabold text-[#191815] text-base">{title}</h3>
+            <p className="text-[11px] text-gray-400 font-medium">Daily Sandhyā Ritual</p>
+          </div>
         </div>
-        <div className="text-sm font-medium">
+        <div className="text-xs font-bold">
           {isCompleted ? (
-            <span className="flex items-center text-green-600 dark:text-green-500 bg-green-50 dark:bg-green-500/10 px-2 py-1 rounded-md">
-              <Check size={16} className="mr-1" /> Completed
+            <span className="flex items-center text-orange-700 bg-orange-50 px-3 py-1 rounded-full border border-orange-200">
+              <Check size={14} className="mr-1 text-orange-600" /> முடிந்தது (Done)
             </span>
           ) : (
-            <span className="flex items-center text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-md">
-              <Clock size={16} className="mr-1" /> Pending
+            <span className="flex items-center text-gray-500 bg-gray-50 px-3 py-1 rounded-full border border-gray-200">
+              <Clock size={14} className="mr-1 text-gray-400" /> Pending
             </span>
           )}
         </div>
@@ -49,21 +52,24 @@ export const SessionCard: React.FC<SessionCardProps> = ({
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <Button onClick={onComplete} className="w-full">
-              Mark Complete
-            </Button>
+            <button
+              onClick={onComplete}
+              className="w-full py-3 rounded-2xl bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-xs font-extrabold shadow-md shadow-orange-500/25 active:scale-[0.98] transition-all"
+            >
+              அனுஷ்டானம் முடிந்தது (Mark Completed)
+            </button>
           </motion.div>
         ) : (
           <motion.div
             key="status"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
-            className="text-sm text-gray-500 dark:text-gray-400 text-center py-2"
+            className="text-xs font-medium text-orange-600 bg-orange-50/50 rounded-2xl py-2 px-3 text-center border border-orange-100"
           >
-            Completed at {completedAt ? format(new Date(completedAt), 'h:mm a') : 'unknown time'}
+            ✓ Completed at {completedAt ? format(new Date(completedAt), 'h:mm a') : 'today'}
           </motion.div>
         )}
       </AnimatePresence>
-    </Card>
+    </div>
   );
 };
