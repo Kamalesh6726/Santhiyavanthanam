@@ -26,7 +26,7 @@ export const AppLayout: React.FC = () => {
             <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-white ring-2 ring-orange-200/80 shadow-sm shrink-0">
               <img src="/arudhra_logo.png" alt="Arudhra Logo" className="w-full h-full object-cover" />
             </div>
-            <h1 className="text-lg font-display font-extrabold tracking-tight text-[#191815]">Sandhyā</h1>
+            <h1 className="text-lg font-display font-extrabold tracking-tight text-[#191815]">SANDHYā</h1>
           </div>
 
           <div className="flex items-center space-x-2">

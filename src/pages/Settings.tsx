@@ -150,7 +150,7 @@ export const Settings: React.FC = () => {
         <div className="divide-y divide-orange-100/80 text-xs">
           <div className="py-2.5 flex items-center justify-between">
             <span className="text-gray-500 font-medium">Application</span>
-            <span className="font-bold text-[#191815]">SANDHYĀ (சந்தியாவந்தனம்)</span>
+            <span className="font-bold text-[#191815]">SANDHYā</span>
           </div>
           <div className="py-2.5 flex items-center justify-between">
             <span className="text-gray-500 font-medium">Version</span>

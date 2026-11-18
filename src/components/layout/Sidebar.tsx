@@ -22,7 +22,7 @@ export const Sidebar: React.FC = () => {
         <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center shadow-md shadow-orange-500/20 bg-white ring-2 ring-orange-200">
           <img src="/arudhra_logo.png" alt="Arudhra Logo" className="w-full h-full object-cover" />
         </div>
-        <h1 className="text-2xl font-display font-extrabold tracking-tight text-[#191815]">Sandhyā</h1>
+        <h1 className="text-2xl font-display font-extrabold tracking-tight text-[#191815]">SANDHYā</h1>
       </div>
 
       <nav className="flex-1 space-y-1.5">

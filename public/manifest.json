@@ -1,23 +1,29 @@
 {
-  "short_name": "SANDHYĀ",
-  "name": "SANDHYĀ — சந்தியாவந்தனம்",
-  "description": "Real-time Sandhyāvandanam accountability, streak tracking & spiritual knowledge.",
+  "short_name": "SANDHYā",
+  "name": "SANDHYā",
+  "description": "Real-time Sandhyāvandanam accountability, streak tracking & spiritual discipline.",
   "icons": [
     {
-      "src": "/arudhra_logo.png",
+      "src": "/icon-192.png",
       "type": "image/png",
-      "sizes": "192x192 512x512",
+      "sizes": "192x192",
       "purpose": "any maskable"
     },
     {
-      "src": "/favicon.svg",
-      "type": "image/svg+xml",
-      "sizes": "any"
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/arudhra_logo.png",
+      "type": "image/png",
+      "sizes": "263x239"
     }
   ],
   "start_url": "/",
-  "background_color": "#F8F5EE",
-  "theme_color": "#C98232",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FF6B00",
   "display": "standalone",
   "orientation": "portrait",
   "categories": ["lifestyle", "productivity", "spirituality"]

@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.sandhya.app',
-  appName: 'SANDHYĀ',
+  appName: 'SANDHYā',
   webDir: 'dist',
   server: {
     androidScheme: 'https'
