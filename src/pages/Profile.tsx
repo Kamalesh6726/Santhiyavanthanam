@@ -253,8 +253,8 @@ export const Profile: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="p-6 max-w-xl mx-auto space-y-4 animate-pulse">
-        <div className="h-28 bg-orange-100/50 rounded-3xl" />
+      <div className="w-full max-w-xl mx-auto space-y-4 animate-pulse">
+        <div className="h-24 bg-orange-50/70 rounded-3xl border border-orange-100" />
         <div className="h-64 bg-white rounded-3xl border border-orange-100" />
       </div>
     );
@@ -263,27 +263,27 @@ export const Profile: React.FC = () => {
   if (!currentUser) return null;
 
   return (
-    <div className="p-4 md:p-8 max-w-xl mx-auto space-y-6 pb-28 font-sans">
+    <div className="w-full max-w-xl mx-auto space-y-5 pb-28 font-sans">
       
       {/* ── Top Bar: Title & 3-Way Language Capsule ── */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between px-1">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-50 border border-orange-200 text-orange-600 text-[10px] font-extrabold uppercase tracking-wide mb-1">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-orange-50 border border-orange-200 text-orange-600 text-[10px] font-extrabold uppercase tracking-wide mb-1">
             <Sparkles className="w-3.5 h-3.5 text-orange-500" />
             <span>{t.subtitle}</span>
           </div>
-          <h1 className="text-2xl font-display font-extrabold text-[#191815] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-display font-extrabold text-[#191815] tracking-tight">
             {t.title}
           </h1>
         </div>
 
         {/* Language Capsule */}
-        <div className="inline-flex p-1 bg-white rounded-2xl shadow-sm border border-orange-200">
+        <div className="inline-flex p-1 bg-white rounded-2xl shadow-sm border border-orange-200 shrink-0">
           {(['ta', 'en', 'sa'] as Language[]).map(l => (
             <button
               key={l}
               onClick={() => setLang(l)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all ${
                 lang === l
                   ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-sm shadow-orange-500/25'
                   : 'text-gray-500 hover:text-orange-600'
@@ -296,28 +296,28 @@ export const Profile: React.FC = () => {
       </div>
 
       {/* ── Profile Header Card (Pure White with Orange Accents) ── */}
-      <div className="relative overflow-hidden bg-white rounded-3xl p-6 border-2 border-orange-100 shadow-[0_10px_35px_rgba(255,107,0,0.06)] space-y-4">
+      <div className="relative overflow-hidden bg-white rounded-3xl p-4 sm:p-6 border-2 border-orange-100 shadow-[0_10px_35px_rgba(255,107,0,0.06)] space-y-3.5 w-full">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-orange-500 to-orange-400 text-white flex items-center justify-center text-2xl font-bold font-display shadow-md shadow-orange-500/30">
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-tr from-orange-500 to-orange-400 text-white flex items-center justify-center text-xl sm:text-2xl font-bold font-display shadow-md shadow-orange-500/30 shrink-0">
               {userData?.name ? userData.name.charAt(0).toUpperCase() : 'S'}
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-xl font-display font-extrabold text-[#191815]">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <h2 className="text-lg sm:text-xl font-display font-extrabold text-[#191815] truncate">
                   {userData?.name || 'சாதகர்'}
                 </h2>
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-orange-50 text-orange-600 font-extrabold border border-orange-200">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-50 text-orange-600 font-extrabold border border-orange-200 shrink-0">
                   {t.badge}
                 </span>
               </div>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-xs text-gray-500 truncate mt-0.5">
                 {currentUser.email}
               </p>
               {userData?.location && (
-                <p className="text-xs text-orange-600 flex items-center gap-1 mt-1 font-semibold">
-                  <MapPin className="w-3.5 h-3.5 text-orange-500" />
-                  {userData.location}
+                <p className="text-xs text-orange-600 flex items-center gap-1 mt-1 font-semibold truncate">
+                  <MapPin className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+                  <span className="truncate">{userData.location}</span>
                 </p>
               )}
             </div>
@@ -325,7 +325,7 @@ export const Profile: React.FC = () => {
 
           <button
             onClick={() => setActiveTab(activeTab === 'form' ? 'summary' : 'form')}
-            className={`p-2.5 rounded-2xl border transition-all active:scale-95 ${
+            className={`p-2 sm:p-2.5 rounded-2xl border transition-all active:scale-95 shrink-0 ml-2 ${
               activeTab === 'form'
                 ? 'bg-orange-500 text-white border-orange-500 shadow-sm shadow-orange-500/20'
                 : 'bg-orange-50 text-orange-600 border-orange-200 hover:bg-orange-100'
@@ -658,7 +658,7 @@ export const Profile: React.FC = () => {
       </div>
 
       {/* ── Generated Abhivadanam Card (Sacred Chant) ── */}
-      <div className="bg-gradient-to-br from-white via-orange-50/20 to-orange-100/30 rounded-3xl p-6 border-2 border-orange-200 shadow-sm space-y-3.5">
+      <div className="bg-gradient-to-br from-white via-orange-50/20 to-orange-100/30 rounded-3xl p-4 sm:p-6 border-2 border-orange-200 shadow-sm space-y-3.5 w-full">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-lg">📿</span>

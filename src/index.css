@@ -5,17 +5,41 @@
 @tailwind utilities;
 
 @layer base {
-  body {
-    @apply bg-brand-background text-brand-primary font-sans antialiased transition-colors duration-300;
+  html, body {
+    @apply bg-[#FAF9F6] text-[#191815] font-sans antialiased;
+    overflow-x: hidden;
+    width: 100%;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
   }
   
-  .dark body {
+  .dark html, .dark body {
     @apply bg-brand-darkBg text-brand-darkPrimaryText;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-display font-medium tracking-tight;
   }
+
+  /* Prevent iOS automatic zoom on focus by ensuring 16px minimum font size */
+  input, select, textarea {
+    font-size: 16px;
+    touch-action: manipulation;
+  }
+
+  button, a {
+    touch-action: manipulation;
+    user-select: none;
+  }
+}
+
+/* Safe area padding utilities for modern notches & home indicator */
+.pb-safe {
+  padding-bottom: max(16px, env(safe-area-inset-bottom, 16px));
+}
+
+.pt-safe {
+  padding-top: max(12px, env(safe-area-inset-top, 12px));
 }
 
 @layer components {

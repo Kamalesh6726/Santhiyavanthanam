@@ -61,9 +61,9 @@ export const Home: React.FC = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto space-y-8 p-4 md:p-0">
-      {/* Header */}
-      <header className="pt-4 pb-2 space-y-1">
+    <div className="w-full max-w-xl mx-auto space-y-5 sm:space-y-6">
+      {/* Header (Desktop greeting, simplified on mobile) */}
+      <header className="hidden md:block pt-2 pb-1 space-y-1">
         <p className="text-xs font-extrabold tracking-widest text-orange-600 uppercase">
           {format(new Date(), 'EEEE, MMMM d')}
         </p>
@@ -71,8 +71,7 @@ export const Home: React.FC = () => {
           <div className="h-10 bg-orange-50 rounded-2xl w-3/4 animate-pulse"></div>
         ) : (
           <h1 className="text-3xl font-display font-extrabold text-[#191815] tracking-tight">
-            Good morning, <br className="md:hidden" />
-            <span className="text-orange-600">{userData.name?.split(' ')[0] || 'Friend'}.</span>
+            Good morning, <span className="text-orange-600">{userData.name?.split(' ')[0] || 'Friend'}.</span>
           </h1>
         )}
       </header>
@@ -80,7 +79,7 @@ export const Home: React.FC = () => {
       {/* Hero Streak Card */}
       <section>
         {userLoading ? (
-          <div className="h-48 bg-gray-200 dark:bg-gray-800 rounded-md w-full animate-pulse"></div>
+          <div className="h-44 bg-orange-50/60 rounded-3xl w-full animate-pulse border border-orange-100"></div>
         ) : (
           <StreakCard 
             currentStreak={userData?.currentStreak || 0} 
@@ -90,40 +89,49 @@ export const Home: React.FC = () => {
       </section>
 
       {/* Weekly Tracker */}
-      <section>
-        <h2 className="text-xl font-display font-semibold mb-4 tracking-tight">This Week</h2>
+      <section className="space-y-2.5">
+        <h2 className="text-base sm:text-lg font-display font-extrabold text-[#191815] tracking-tight px-1">
+          This Week • வாரக் கணக்கு
+        </h2>
         <WeeklyTracker />
       </section>
 
       {/* Today's Progress */}
-      <section>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-display font-semibold tracking-tight">Today's Progress</h2>
+      <section className="space-y-2.5">
+        <div className="flex items-center justify-between px-1">
+          <h2 className="text-base sm:text-lg font-display font-extrabold text-[#191815] tracking-tight">
+            Today's Progress • இன்றைய இலக்கு
+          </h2>
         </div>
         
         {sessionsLoading ? (
-           <div className="h-32 bg-gray-200 dark:bg-gray-800 rounded-md w-full animate-pulse"></div>
+           <div className="h-28 bg-orange-50/60 rounded-3xl w-full animate-pulse border border-orange-100"></div>
         ) : (
-          <Card className="p-6 flex items-center bg-white dark:bg-brand-darkElevated border-0">
-            <ProgressRing completedSegments={segments} size={80} strokeWidth={8}>
-              <span className="font-display font-bold text-xl">{completedCount}/3</span>
-            </ProgressRing>
-            <div className="ml-6">
-              <h3 className="font-semibold text-lg text-brand-primary dark:text-brand-darkPrimaryText">
+          <div className="p-4 sm:p-5 flex items-center bg-white rounded-3xl border border-orange-100 shadow-[0_4px_20px_rgba(255,107,0,0.04)] w-full">
+            <div className="shrink-0">
+              <ProgressRing completedSegments={segments} size={72} strokeWidth={7}>
+                <span className="font-display font-black text-lg text-orange-600">{completedCount}/3</span>
+              </ProgressRing>
+            </div>
+            <div className="ml-4 sm:ml-5">
+              <h3 className="font-display font-extrabold text-base text-[#191815] leading-tight">
                 {isPerfectDay ? 'Perfect Day ✨' : `${3 - completedCount} sessions remaining`}
               </h3>
-              <p className="text-sm text-gray-500 dark:text-brand-darkMutedText mt-1">
+              <p className="text-xs text-gray-500 mt-0.5">
                 {isPerfectDay 
-                  ? 'Your consistency is growing.' 
-                  : 'Complete your daily practice.'}
+                  ? 'அனைத்து 3 சந்தியாவந்தனங்களும் முடிந்தது! நன்று.' 
+                  : 'Complete your 3 daily Sandhyā prayers.'}
               </p>
             </div>
-          </Card>
+          </div>
         )}
       </section>
 
       {/* Sessions */}
-      <section className="space-y-3">
+      <section className="space-y-3 pt-1">
+        <h2 className="text-base sm:text-lg font-display font-extrabold text-[#191815] tracking-tight px-1">
+          Daily Sessions • தினசரி அனுஷ்டானம்
+        </h2>
         {sessionsLoading ? (
           <>
             <div className="h-20 bg-gray-200 dark:bg-gray-800 rounded-md w-full animate-pulse"></div>

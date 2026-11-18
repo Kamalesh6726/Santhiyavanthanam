@@ -16,29 +16,32 @@ export const BottomNav: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-xl border-t border-orange-100 px-6 py-3.5 flex justify-between items-center z-50 shadow-[0_-4px_20px_rgba(255,107,0,0.04)]">
+    <nav className="md:hidden fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-xl border-t border-orange-100/90 px-2 pt-1 pb-[max(10px,env(safe-area-inset-bottom))] flex justify-around items-center z-50 shadow-[0_-4px_24px_rgba(255,107,0,0.06)]">
       {navItems.map(({ path, label, icon: Icon }) => {
         const isActive = location.pathname === path;
         return (
           <button
             key={path}
             onClick={() => navigate(path)}
-            className={`flex flex-col items-center space-y-0.5 transition-colors ${
+            aria-label={label}
+            className={`flex-1 py-1.5 px-1 flex flex-col items-center justify-center rounded-2xl transition-all touch-manipulation active:scale-95 ${
               isActive 
-                ? 'text-orange-600 font-bold' 
+                ? 'text-orange-600 font-extrabold' 
                 : 'text-gray-400 hover:text-orange-500'
             }`}
           >
-            <div className="relative">
-              <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
+            <div className={`relative p-1 rounded-xl transition-colors ${isActive ? 'bg-orange-50' : ''}`}>
+              <Icon size={20} strokeWidth={isActive ? 2.5 : 2} className={isActive ? 'text-orange-600' : 'text-gray-400'} />
               {isActive && (
                 <motion.div 
                   layoutId="mobile-nav-indicator"
-                  className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-orange-500"
+                  className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-orange-500"
                 />
               )}
             </div>
-            <span className="text-[10px] mt-0.5">{label}</span>
+            <span className={`text-[10px] tracking-tight mt-0.5 leading-none ${isActive ? 'text-orange-600 font-extrabold' : 'text-gray-400'}`}>
+              {label}
+            </span>
           </button>
         );
       })}

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Card } from '../components/ui/Card';
 import { Target, CalendarDays, ArrowRight, X, Flame, Trophy, Clock } from 'lucide-react';
 import { useChallenges, useMyCircle } from '../hooks/useFirebaseData';
 import { useAuth } from '../store/AuthContext';
@@ -161,32 +160,30 @@ export const Challenge = () => {
   const activeChallenge = challenges.length > 0 ? challenges[0] : null;
 
   return (
-    <div className="space-y-6 pb-28 p-4 md:p-0">
-      <header className="mb-4">
-        <h1 className="text-3xl font-display font-bold text-brand-charcoal dark:text-gray-100">Challenges</h1>
-        <p className="text-gray-500 dark:text-gray-400 mt-1">Push your limits, together.</p>
+    <div className="w-full max-w-xl mx-auto space-y-5 pb-28">
+      <header className="mb-2 px-1">
+        <h1 className="text-2xl sm:text-3xl font-display font-extrabold text-[#191815] tracking-tight">Challenges</h1>
+        <p className="text-gray-500 text-xs sm:text-sm mt-0.5">Push your limits, together.</p>
       </header>
 
       {activeChallenge ? (
-        <Card className="p-6 overflow-hidden relative group">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-brand-saffron/5 rounded-bl-full -z-10" />
-
-          <div className="flex items-start justify-between mb-5">
+        <div className="p-5 sm:p-6 rounded-3xl bg-white border-2 border-orange-100 shadow-[0_10px_35px_rgba(255,107,0,0.06)] relative overflow-hidden w-full">
+          <div className="flex items-start justify-between mb-4">
             <div>
-              <span className="inline-block px-3 py-1 bg-brand-saffron/10 text-brand-saffron rounded-full text-xs font-bold uppercase tracking-wider mb-3">
+              <span className="inline-block px-3 py-1 bg-orange-50 text-orange-600 border border-orange-200/60 rounded-full text-[10px] font-extrabold uppercase tracking-wider mb-2">
                 Active
               </span>
-              <h2 className="text-2xl font-bold font-display text-brand-charcoal dark:text-gray-100">
+              <h2 className="text-xl sm:text-2xl font-extrabold font-display text-[#191815]">
                 {activeChallenge.name}
               </h2>
             </div>
-            <div className="w-12 h-12 bg-brand-ivory dark:bg-gray-800 rounded-full flex items-center justify-center shrink-0">
-              <Target className="w-6 h-6 text-brand-saffron" />
+            <div className="w-11 h-11 bg-orange-50 rounded-2xl flex items-center justify-center shrink-0 border border-orange-200/80 shadow-sm">
+              <Target className="w-5 h-5 text-orange-600" />
             </div>
           </div>
 
-          <div className="flex items-center text-gray-500 dark:text-gray-400 text-sm mb-6">
-            <CalendarDays className="w-4 h-4 mr-2 text-brand-saffron" />
+          <div className="flex items-center text-gray-500 text-xs sm:text-sm mb-5">
+            <CalendarDays className="w-4 h-4 mr-2 text-orange-500" />
             Started {safeFormat(activeChallenge.startDate, 'MMM d, yyyy', 'today')}
           </div>
 
@@ -197,14 +194,14 @@ export const Challenge = () => {
             const total = activeChallenge.duration || 30;
             const pct = Math.min(100, Math.max(0, Math.round((passed / total) * 100)));
             return (
-              <div className="mb-6">
-                <div className="flex justify-between text-xs text-gray-400 mb-1.5">
+              <div className="mb-5">
+                <div className="flex justify-between text-xs font-bold text-gray-500 mb-1.5">
                   <span>Day {passed} of {total}</span>
-                  <span className="text-brand-saffron font-semibold">{pct}%</span>
+                  <span className="text-orange-600 font-extrabold">{pct}%</span>
                 </div>
-                <div className="h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                <div className="h-2.5 bg-orange-50 rounded-full overflow-hidden border border-orange-100">
                   <div
-                    className="h-full bg-gradient-to-r from-brand-saffron to-brand-gold rounded-full transition-all"
+                    className="h-full bg-gradient-to-r from-orange-500 to-orange-600 rounded-full transition-all"
                     style={{ width: `${pct}%` }}
                   />
                 </div>
@@ -214,22 +211,22 @@ export const Challenge = () => {
 
           <button
             onClick={() => setSelectedChallenge(activeChallenge)}
-            className="w-full py-4 rounded-2xl bg-[#191815] hover:bg-[#2A2723] text-white dark:bg-white dark:text-[#191815] dark:hover:bg-gray-100 font-bold flex items-center justify-between px-6 shadow-md hover:shadow-lg active:scale-[0.98] transition-all group border border-transparent dark:border-gray-200"
+            className="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-orange-500 to-orange-600 text-white font-extrabold flex items-center justify-between shadow-md shadow-orange-500/25 active:scale-[0.98] transition-all min-h-[46px]"
           >
-            <span className="text-sm tracking-wide font-medium">View Challenge Details</span>
-            <div className="w-8 h-8 rounded-full bg-white/10 dark:bg-black/10 flex items-center justify-center group-hover:bg-brand-saffron group-hover:text-white transition-colors">
-              <ArrowRight className="w-4 h-4 text-brand-saffron group-hover:text-white group-hover:translate-x-0.5 transition-all" />
+            <span className="text-xs sm:text-sm tracking-wide">View Challenge Details</span>
+            <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center">
+              <ArrowRight className="w-4 h-4 text-white" />
             </div>
           </button>
-        </Card>
+        </div>
       ) : (
-        <Card className="p-8 text-center space-y-6 border-2 border-dashed border-brand-saffron/30 bg-white dark:bg-brand-darkCard">
-          <div className="w-16 h-16 bg-brand-saffron/10 rounded-full flex items-center justify-center mx-auto">
-            <Target className="w-8 h-8 text-brand-saffron" />
+        <div className="p-6 sm:p-8 text-center space-y-5 rounded-3xl border-2 border-dashed border-orange-200 bg-white">
+          <div className="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto text-orange-600">
+            <Target className="w-7 h-7 text-orange-600" />
           </div>
           <div>
-            <h3 className="text-xl font-bold mb-2 text-brand-charcoal dark:text-gray-100">No Active Challenge</h3>
-            <p className="text-gray-500 dark:text-gray-400 text-sm max-w-xs mx-auto">
+            <h3 className="text-lg font-bold mb-1 text-[#191815]">No Active Challenge</h3>
+            <p className="text-gray-500 text-xs max-w-xs mx-auto">
               {!circle
                 ? 'Join or create a Circle first to start a challenge.'
                 : 'Start a 30-day challenge and keep your Circle motivated.'}
@@ -239,12 +236,12 @@ export const Challenge = () => {
             <button
               onClick={handleCreateChallenge}
               disabled={creating}
-              className="w-full py-4 rounded-2xl bg-brand-saffron text-white font-bold text-base active:scale-95 transition-transform disabled:opacity-60"
+              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-orange-500 to-orange-600 text-white font-extrabold text-sm active:scale-95 transition-transform disabled:opacity-60 shadow-md shadow-orange-500/25 min-h-[46px]"
             >
               {creating ? 'Creating...' : '✦ Start 30-Day Challenge'}
             </button>
           )}
-        </Card>
+        </div>
       )}
 
       {/* Challenge Detail Sheet */}
