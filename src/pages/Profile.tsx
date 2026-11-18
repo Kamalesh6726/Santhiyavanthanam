@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../store/AuthContext';
 import { useUserData } from '../hooks/useFirebaseData';
 import { updateUserProfile } from '../lib/db';
-import { useNavigate } from 'react-router-dom';
+import { logOut } from '../lib/firebase';
 import {
-  BookOpen, Edit3, Flame, Trophy,
-  MapPin, Check, Copy, ArrowRight, Sparkles, CheckCircle2, AlertCircle
+  Edit3, Flame, Trophy,
+  MapPin, Check, Copy, Sparkles, CheckCircle2, AlertCircle, LogOut
 } from 'lucide-react';
 
 // ─── Language Type ─────────────────────────────────────────────────────────────
@@ -35,8 +35,6 @@ const PROFILE_STRINGS = {
     notSet: 'இன்னும் நிரப்பப்படவில்லை',
     abhivadanamTitle: 'உங்கள் அபிவாதனம் (Your Abhivādaye)',
     abhivadanamSub: 'உங்கள் கோத்ரம், ப்ரவரம் மற்றும் ஸூத்ரத்தின் அடிப்படையில் உருவானது.',
-    wisdomCardTitle: 'சந்தியா ஞானம் (Wisdom)',
-    wisdomCardSub: 'ஆராய்ச்சி நன்மைகள் & அட்டை வடிவில் வேத விளக்கம்',
     saveBtn: 'அடிப்படை விவரங்களைச் சேமிக்க (Save)',
     savingBtn: 'சேமிக்கிறது...',
     successMsg: 'அடிப்படை விவரங்கள் வெற்றிகரமாக சேமிக்கப்பட்டன!',
@@ -66,8 +64,6 @@ const PROFILE_STRINGS = {
     notSet: 'Not set yet',
     abhivadanamTitle: 'Your Abhivādaye Chant',
     abhivadanamSub: 'Auto-synthesized from your Gotra, Pravara, Sutra, and Veda.',
-    wisdomCardTitle: 'Sandhyā Jñānam (Wisdom)',
-    wisdomCardSub: 'Scientific Research & Flashcards in 3 Languages',
     saveBtn: 'Save Basic Information',
     savingBtn: 'Saving...',
     successMsg: 'Basic information successfully saved!',
@@ -97,8 +93,6 @@ const PROFILE_STRINGS = {
     notSet: 'अनिरूपितम्',
     abhivadanamTitle: 'भवतः अभिवादनम्',
     abhivadanamSub: 'स्वगोत्र-प्रवर-सूत्रानुसारेण स्वयमेव सङ्कलितम्।',
-    wisdomCardTitle: 'सन्ध्या ज्ञानम्',
-    wisdomCardSub: 'वैज्ञानिकप्रभावाः & मन्त्राः (त्रिभाषासु)',
     saveBtn: 'संरक्षतु (Save Details)',
     savingBtn: 'संरक्षति...',
     successMsg: 'मूलविवरणं सफलतया संरक्षितम्!',
@@ -163,7 +157,6 @@ const GOTRA_PRESETS: Record<string, { gotra: string; pravara: string }> = {
 export const Profile: React.FC = () => {
   const { currentUser } = useAuth();
   const { userData, loading } = useUserData();
-  const navigate = useNavigate();
 
   const [lang, setLang] = useState<Language>('ta');
   const [activeTab, setActiveTab] = useState<'form' | 'summary'>('form');
@@ -693,23 +686,13 @@ export const Profile: React.FC = () => {
         </p>
       </div>
 
-      {/* ── Wisdom Link Card (Clean Orange Gradient) ── */}
+      {/* ── Sign Out Button ── */}
       <button
-        onClick={() => navigate('/wisdom')}
-        className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-3xl p-5 shadow-lg shadow-orange-500/25 flex items-center justify-between text-left transition-all active:scale-[0.98] group"
+        onClick={() => logOut()}
+        className="w-full py-3.5 rounded-3xl bg-white hover:bg-red-50 text-red-600 font-extrabold text-xs border border-red-200 transition-all flex items-center justify-center gap-2 shadow-sm"
       >
-        <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center text-white">
-            <BookOpen className="w-6 h-6" />
-          </div>
-          <div>
-            <h4 className="font-display font-extrabold text-base tracking-tight">{t.wisdomCardTitle}</h4>
-            <p className="text-xs text-orange-100">{t.wisdomCardSub}</p>
-          </div>
-        </div>
-        <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-1 transition-transform">
-          <ArrowRight className="w-4 h-4 text-white" />
-        </div>
+        <LogOut className="w-4 h-4 text-red-500" />
+        <span>கணக்கிலிருந்து வெளியேறு (Sign Out)</span>
       </button>
 
     </div>

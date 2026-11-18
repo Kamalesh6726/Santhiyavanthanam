@@ -9,15 +9,12 @@ import { WeeklyTracker } from '../components/shared/WeeklyTracker';
 import { format } from 'date-fns';
 import { safeFormat } from '../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, ArrowRight } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 import { Card } from '../components/ui/Card';
-
-import { useNavigate } from 'react-router-dom';
 
 export const Home: React.FC = () => {
   const { currentUser } = useAuth();
   const { userData, loading: userLoading } = useUserData();
-  const navigate = useNavigate();
   
   const todayStr = format(new Date(), 'yyyy-MM-dd');
   const { sessions, loading: sessionsLoading } = useTodaySessions(todayStr);
@@ -158,32 +155,6 @@ export const Home: React.FC = () => {
             />
           </>
         )}
-      </section>
-
-      {/* Daily Wisdom Card */}
-      <section className="pt-2">
-        <button
-          onClick={() => navigate('/wisdom')}
-          className="w-full text-left group"
-        >
-          <div className="relative overflow-hidden rounded-2xl border border-[#E9DFCF]/60 dark:border-gray-800 bg-gradient-to-br from-[#FDF8F0] to-[#F5EED8] dark:from-[#1A1810] dark:to-[#151210] p-5 shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
-            {/* Decorative quote mark */}
-            <div className="absolute top-2 left-3 text-[#D8AD62]/15 font-serif text-7xl leading-none select-none">"</div>
-            <div className="relative z-10 space-y-3">
-              <span className="text-[10px] font-bold tracking-widest text-brand-saffron uppercase flex items-center gap-1.5">
-                🌅 சந்தியா ஞானம் · இன்று சிந்திக்க
-              </span>
-              <p className="text-base font-medium text-brand-charcoal dark:text-gray-100 leading-relaxed">
-                "இன்றைய கடமை, இன்றே நிறைவேறட்டும்."
-              </p>
-              <p className="text-xs text-brand-saffron/80 font-semibold">— ஆன்மீக சிந்தனை</p>
-              <div className="flex items-center text-xs font-semibold text-gray-500 dark:text-gray-400 group-hover:text-brand-saffron transition-colors pt-1">
-                Read Today's Wisdom <ArrowRight size={13} className="ml-1 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </div>
-            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-brand-gold/30 to-transparent" />
-          </div>
-        </button>
       </section>
 
       {/* Recent Activity / Notifications */}

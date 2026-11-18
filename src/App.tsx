@@ -7,7 +7,6 @@ import { Challenge } from './pages/Challenge';
 import { Calendar } from './pages/Calendar';
 import { Circle } from './pages/Circle';
 import { Profile } from './pages/Profile';
-import { WisdomPage } from './pages/Wisdom';
 import { Settings } from './pages/Settings';
 import { Login } from './pages/Auth/Login';
 import { Button } from './components/ui/Button';
@@ -89,7 +88,6 @@ function App() {
               <Route path="calendar" element={<Calendar />} />
               <Route path="circle" element={<Circle />} />
               <Route path="profile" element={<Profile />} />
-              <Route path="wisdom" element={<WisdomPage />} />
               <Route path="settings" element={<Settings />} />
             </Route>
           </Route>
