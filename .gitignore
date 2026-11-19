@@ -36,3 +36,5 @@ android/*.iml
 android/app/*.iml
 android/local.properties
 *.apk
+*.aab
+*.jks
