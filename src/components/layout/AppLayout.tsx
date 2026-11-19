@@ -5,7 +5,7 @@ import { Sidebar } from './Sidebar';
 import { BottomNav } from './BottomNav';
 import { InstallPrompt } from '../shared/InstallPrompt';
 import { useUserData } from '../../hooks/useFirebaseData';
-import { Flame, Download } from 'lucide-react';
+import { Flame } from 'lucide-react';
 
 export const AppLayout: React.FC = () => {
   const location = useLocation();
@@ -30,17 +30,6 @@ export const AppLayout: React.FC = () => {
           </div>
 
           <div className="flex items-center space-x-2">
-            {/* Download APK Pill */}
-            <a
-              href="/SANDHYa.apk"
-              download="SANDHYa.apk"
-              title="Download Android APK"
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-extrabold text-[11px] shadow-sm active:scale-95 transition-transform"
-            >
-              <Download className="w-3 h-3 text-white" />
-              <span>APK</span>
-            </a>
-
             {/* Streak Pill */}
             <div 
               onClick={() => navigate('/')}
