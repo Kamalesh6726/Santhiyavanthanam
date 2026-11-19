@@ -3,7 +3,7 @@ import { useAuth } from '../store/AuthContext';
 import { useUserData } from '../hooks/useFirebaseData';
 import { logOut } from '../lib/firebase';
 import {
-  Bell, Moon, Sun, LogOut, Check
+  Bell, Moon, Sun, LogOut, Check, Smartphone, Download
 } from 'lucide-react';
 
 export const Settings: React.FC = () => {
@@ -139,6 +139,30 @@ export const Settings: React.FC = () => {
             <span>Reminders preference updated!</span>
           </div>
         )}
+      </div>
+
+      {/* ── Section: Download APK ── */}
+      <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-3xl p-5 text-white shadow-[0_8px_25px_rgba(255,107,0,0.25)] space-y-3">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center shrink-0">
+            <Smartphone className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h3 className="font-extrabold text-sm text-white">Android Application (.apk)</h3>
+            <p className="text-white/80 text-[11px]">Install SANDHYā directly on your phone</p>
+          </div>
+        </div>
+        <p className="text-xs text-white/90 leading-relaxed">
+          Install the native Android app with notifications, offline support, and high performance.
+        </p>
+        <a
+          href="/SANDHYa.apk"
+          download="SANDHYa.apk"
+          className="w-full py-3 px-4 bg-white hover:bg-orange-50 text-orange-600 font-extrabold text-xs sm:text-sm rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all active:scale-[0.98]"
+        >
+          <Download className="w-4 h-4 text-orange-600" />
+          <span>Download SANDHYā.apk (6.4 MB)</span>
+        </a>
       </div>
 
       {/* ── Section: App & Device Info ── */}

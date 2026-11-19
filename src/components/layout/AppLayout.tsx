@@ -5,7 +5,7 @@ import { Sidebar } from './Sidebar';
 import { BottomNav } from './BottomNav';
 import { InstallPrompt } from '../shared/InstallPrompt';
 import { useUserData } from '../../hooks/useFirebaseData';
-import { Flame } from 'lucide-react';
+import { Flame, Download } from 'lucide-react';
 
 export const AppLayout: React.FC = () => {
   const location = useLocation();
@@ -22,7 +22,7 @@ export const AppLayout: React.FC = () => {
         
         {/* Mobile Top App Bar (Visible only on mobile devices) */}
         <header className="md:hidden sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-orange-100/90 px-4 py-2.5 flex items-center justify-between shadow-[0_2px_12px_rgba(255,107,0,0.03)] w-full">
-          <div className="flex items-center space-x-2.5" onClick={() => navigate('/')}>
+          <div className="flex items-center space-x-2.5 cursor-pointer" onClick={() => navigate('/')}>
             <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-white ring-2 ring-orange-200/80 shadow-sm shrink-0">
               <img src="/arudhra_logo.png" alt="Arudhra Logo" className="w-full h-full object-cover" />
             </div>
@@ -30,6 +30,17 @@ export const AppLayout: React.FC = () => {
           </div>
 
           <div className="flex items-center space-x-2">
+            {/* Download APK Pill */}
+            <a
+              href="/SANDHYa.apk"
+              download="SANDHYa.apk"
+              title="Download Android APK"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-extrabold text-[11px] shadow-sm active:scale-95 transition-transform"
+            >
+              <Download className="w-3 h-3 text-white" />
+              <span>APK</span>
+            </a>
+
             {/* Streak Pill */}
             <div 
               onClick={() => navigate('/')}

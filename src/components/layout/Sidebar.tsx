@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, Users, Trophy, Calendar as CalendarIcon, User as UserIcon, Settings } from 'lucide-react';
+import { Home, Users, Trophy, Calendar as CalendarIcon, User as UserIcon, Settings, Download } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const sidebarItems = [
@@ -51,8 +51,18 @@ export const Sidebar: React.FC = () => {
         })}
       </nav>
       
-      <div className="mt-auto pt-6 border-t border-orange-100 px-4 text-xs text-gray-400 font-medium">
-        v1.0.0 Production
+      <div className="mt-auto pt-4 border-t border-orange-100 space-y-3">
+        <a
+          href="/SANDHYa.apk"
+          download="SANDHYa.apk"
+          className="w-full flex items-center justify-center space-x-2 py-2.5 px-3 rounded-2xl bg-orange-50 hover:bg-orange-100/80 text-orange-600 font-bold text-xs border border-orange-200 transition-all shadow-sm"
+        >
+          <Download size={14} className="text-orange-500" />
+          <span>Download Android APK</span>
+        </a>
+        <div className="px-2 text-xs text-gray-400 font-medium">
+          v1.0.0 Production
+        </div>
       </div>
     </aside>
   );
