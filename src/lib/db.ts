@@ -6,30 +6,66 @@ import { db } from './firebase';
 // ==========================================
 
 export const createUserProfile = async (uid: string, email: string | null, name: string | null) => {
-  const userRef = doc(db, 'users', uid);
-  const snap = await getDoc(userRef);
-  
-  if (!snap.exists()) {
-    await setDoc(userRef, {
-      uid,
-      email,
-      name: name || 'Sandhyā User',
-      username: `@${(name || 'user').toLowerCase().replace(/\s+/g, '')}${Math.floor(Math.random() * 1000)}`,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-      currentStreak: 0,
-      bestStreak: 0,
-      totalSessions: 0,
-    });
+  if (uid.startsWith('guest_')) {
+    const pKey = `user_profile_${uid}`;
+    if (!localStorage.getItem(pKey)) {
+      const initial = {
+        id: uid,
+        uid,
+        email: email || '',
+        name: name || 'Sandhyā Practitioner',
+        username: '@practitioner',
+        currentStreak: 0,
+        bestStreak: 0,
+        totalSessions: 0,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      localStorage.setItem(pKey, JSON.stringify(initial));
+    }
+    return;
+  }
+
+  try {
+    const userRef = doc(db, 'users', uid);
+    const snap = await getDoc(userRef);
+    if (!snap.exists()) {
+      await setDoc(userRef, {
+        uid,
+        email,
+        name: name || 'Sandhyā User',
+        username: `@${(name || 'user').toLowerCase().replace(/\s+/g, '')}${Math.floor(Math.random() * 1000)}`,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        currentStreak: 0,
+        bestStreak: 0,
+        totalSessions: 0,
+      });
+    }
+  } catch (e) {
+    console.warn("Could not sync profile to Firestore, saving locally:", e);
   }
 };
 
 export const updateUserProfile = async (uid: string, data: Record<string, any>) => {
-  const userRef = doc(db, 'users', uid);
-  await updateDoc(userRef, {
-    ...data,
-    updatedAt: serverTimestamp(),
-  });
+  const pKey = `user_profile_${uid}`;
+  try {
+    const local = JSON.parse(localStorage.getItem(pKey) || '{}');
+    localStorage.setItem(pKey, JSON.stringify({ ...local, ...data, updatedAt: new Date().toISOString() }));
+    window.dispatchEvent(new Event('sandhya_local_data_updated'));
+  } catch {}
+
+  if (uid.startsWith('guest_')) return;
+
+  try {
+    const userRef = doc(db, 'users', uid);
+    await updateDoc(userRef, {
+      ...data,
+      updatedAt: serverTimestamp(),
+    });
+  } catch (e) {
+    console.warn("Could not update remote profile:", e);
+  }
 };
 
 // ==========================================
@@ -236,6 +272,38 @@ export const joinCircle = async (circleId: string, uid: string) => {
 
 // ─── Record session + update Circle daily progress ───────────────────────────
 export const recordSession = async (uid: string, type: 'pratah' | 'madhyahnika' | 'sayam', dateStr: string) => {
+  // Update local session storage regardless to guarantee zero-latency offline feedback
+  const localKey = `sessions_${uid}_${dateStr}`;
+  let localList: any[] = [];
+  try {
+    localList = JSON.parse(localStorage.getItem(localKey) || '[]');
+  } catch {}
+  if (!localList.some(s => s.type === type)) {
+    localList.push({
+      id: `${dateStr}-${type}`,
+      userId: uid,
+      type,
+      date: dateStr,
+      completed: true,
+      completedAt: new Date().toISOString()
+    });
+    localStorage.setItem(localKey, JSON.stringify(localList));
+
+    const pKey = `user_profile_${uid}`;
+    let p: any = {};
+    try { p = JSON.parse(localStorage.getItem(pKey) || '{}'); } catch {}
+    p.totalSessions = (p.totalSessions || 0) + 1;
+    p.currentStreak = (p.currentStreak || 0) + 1;
+    p.bestStreak = Math.max(p.currentStreak, p.bestStreak || 0);
+    localStorage.setItem(pKey, JSON.stringify(p));
+    localStorage.setItem('sandhya_local_streak', String(p.currentStreak));
+    localStorage.setItem('sandhya_local_total_sessions', String(p.totalSessions));
+
+    window.dispatchEvent(new Event('sandhya_local_data_updated'));
+  }
+
+  if (uid.startsWith('guest_')) return;
+
   const sessionId = `${dateStr}-${type}`;
   const sessionRef = doc(db, `users/${uid}/sessions`, sessionId);
   

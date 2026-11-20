@@ -10,7 +10,7 @@ export const ProtectedRoute: React.FC = () => {
   }
 
   if (!currentUser) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/welcome" replace />;
   }
 
   return <Outlet />;

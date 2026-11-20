@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { useAuth } from '../store/AuthContext';
 import { useUserData } from '../hooks/useFirebaseData';
-import { logOut } from '../lib/firebase';
 import {
   Bell, Moon, Sun, LogOut, Check, Smartphone, Download
 } from 'lucide-react';
 
 export const Settings: React.FC = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, signOutApp } = useAuth();
   const { userData } = useUserData();
 
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -189,7 +188,7 @@ export const Settings: React.FC = () => {
 
       {/* ── Sign Out Button ── */}
       <button
-        onClick={() => logOut()}
+        onClick={() => signOutApp()}
         className="w-full py-4 rounded-3xl bg-white hover:bg-red-50 text-red-600 font-extrabold text-xs sm:text-sm border-2 border-red-100 hover:border-red-200 transition-all flex items-center justify-center gap-2 shadow-sm active:scale-[0.98]"
       >
         <LogOut className="w-4 h-4 text-red-500" />

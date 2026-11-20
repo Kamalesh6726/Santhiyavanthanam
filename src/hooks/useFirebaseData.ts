@@ -17,6 +17,36 @@ export const useUserData = () => {
       return;
     }
 
+    const loadLocal = () => {
+      const pKey = `user_profile_${currentUser.uid}`;
+      const stored = localStorage.getItem(pKey);
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch {}
+      }
+      return {
+        id: currentUser.uid,
+        uid: currentUser.uid,
+        name: currentUser.displayName || 'Sandhyā Practitioner',
+        username: '@practitioner',
+        email: currentUser.email || '',
+        currentStreak: Number(localStorage.getItem('sandhya_local_streak') || 0),
+        bestStreak: Number(localStorage.getItem('sandhya_local_streak') || 0),
+        totalSessions: Number(localStorage.getItem('sandhya_local_total_sessions') || 0),
+      };
+    };
+
+    if (currentUser.uid.startsWith('guest_') || currentUser.isAnonymous) {
+      setUserData(loadLocal() as User);
+      setLoading(false);
+      const onLocalUpdate = () => {
+        setUserData(loadLocal() as User);
+      };
+      window.addEventListener('sandhya_local_data_updated', onLocalUpdate);
+      return () => window.removeEventListener('sandhya_local_data_updated', onLocalUpdate);
+    }
+
     const unsubscribe = onSnapshot(
       doc(db, 'users', currentUser.uid), 
       (docSnap) => {
@@ -29,8 +59,8 @@ export const useUserData = () => {
         setError(null);
       },
       (err) => {
-        console.error("[Firestore ERROR] useUserData:", err);
-        setError(err);
+        console.warn("[Firestore fallback to local] useUserData:", err);
+        setUserData(loadLocal() as User);
         setLoading(false);
       }
     );
@@ -54,6 +84,23 @@ export const useTodaySessions = (dateStr: string) => {
       return;
     }
 
+    const loadLocalSessions = () => {
+      const key = `sessions_${currentUser.uid}_${dateStr}`;
+      try {
+        const stored = localStorage.getItem(key);
+        return stored ? JSON.parse(stored) : [];
+      } catch {}
+      return [];
+    };
+
+    if (currentUser.uid.startsWith('guest_') || currentUser.isAnonymous) {
+      setSessions(loadLocalSessions());
+      setLoading(false);
+      const onUpdate = () => setSessions(loadLocalSessions());
+      window.addEventListener('sandhya_local_data_updated', onUpdate);
+      return () => window.removeEventListener('sandhya_local_data_updated', onUpdate);
+    }
+
     const q = query(
       collection(db, `users/${currentUser.uid}/sessions`),
       where('date', '==', dateStr)
@@ -68,8 +115,8 @@ export const useTodaySessions = (dateStr: string) => {
         setError(null);
       },
       (err) => {
-        console.error("[Firestore ERROR] useTodaySessions:", err);
-        setError(err);
+        console.warn("[Firestore fallback to local] useTodaySessions:", err);
+        setSessions(loadLocalSessions());
         setLoading(false);
       }
     );
@@ -93,6 +140,28 @@ export const useWeeklySessions = (weekDatesStr: string[]) => {
       return;
     }
 
+    const loadLocalWeekly = () => {
+      const all: Session[] = [];
+      for (const d of weekDatesStr) {
+        const key = `sessions_${currentUser.uid}_${d}`;
+        try {
+          const stored = localStorage.getItem(key);
+          if (stored) {
+            all.push(...JSON.parse(stored));
+          }
+        } catch {}
+      }
+      return all;
+    };
+
+    if (currentUser.uid.startsWith('guest_') || currentUser.isAnonymous) {
+      setSessions(loadLocalWeekly());
+      setLoading(false);
+      const onUpdate = () => setSessions(loadLocalWeekly());
+      window.addEventListener('sandhya_local_data_updated', onUpdate);
+      return () => window.removeEventListener('sandhya_local_data_updated', onUpdate);
+    }
+
     const q = query(
       collection(db, `users/${currentUser.uid}/sessions`),
       where('date', 'in', weekDatesStr)
@@ -107,14 +176,14 @@ export const useWeeklySessions = (weekDatesStr: string[]) => {
         setError(null);
       },
       (err) => {
-        console.error("[Firestore ERROR] useWeeklySessions:", err);
-        setError(err);
+        console.warn("[Firestore fallback to local] useWeeklySessions:", err);
+        setSessions(loadLocalWeekly());
         setLoading(false);
       }
     );
 
     return () => unsubscribe();
-  }, [currentUser, weekDatesStr.join(',')]); // Use joined string for stable dependency
+  }, [currentUser, weekDatesStr.join(',')]);
 
   return { sessions, loading, error };
 };
