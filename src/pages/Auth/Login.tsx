@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { signInWithGoogle, signInWithEmail, signUpWithEmail } from '../../lib/firebase';
+import { signInWithGoogle, signInWithEmail, signUpWithEmail, signInAsGuest } from '../../lib/firebase';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { motion } from 'framer-motion';
@@ -27,7 +27,9 @@ export const Login: React.FC = () => {
 
   const handleError = (err: any) => {
     console.error(err);
-    if (err.code === 'auth/invalid-api-key' || err.message?.includes('API_KEY')) {
+    if (err.message?.includes('missing initial state') || err.message?.includes('sessionStorage') || err.code === 'auth/missing-or-invalid-nonce') {
+      setError('Google Sign-In was blocked by browser storage partitioning. Please sign in with your Email & Password above, or click "Continue as Guest" below.');
+    } else if (err.code === 'auth/invalid-api-key' || err.message?.includes('API_KEY')) {
       setError('Firebase is not configured properly. Check your API key.');
     } else if (err.code === 'auth/invalid-credential') {
       setError('Incorrect email or password. If you do not have an account, please switch to the Sign Up tab.');
@@ -45,6 +47,19 @@ export const Login: React.FC = () => {
       setLoading(true);
       setError(null);
       await signInWithGoogle();
+      navigate(returnTo, { replace: true });
+    } catch (err: any) {
+      handleError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGuestSignIn = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      await signInAsGuest();
       navigate(returnTo, { replace: true });
     } catch (err: any) {
       handleError(err);
@@ -172,7 +187,7 @@ export const Login: React.FC = () => {
 
           <Button 
             variant="secondary" 
-            className="w-full flex items-center justify-center space-x-3 py-4"
+            className="w-full flex items-center justify-center space-x-3 py-4 mb-3"
             onClick={handleGoogleSignIn}
             disabled={loading}
           >
@@ -184,6 +199,15 @@ export const Login: React.FC = () => {
             </svg>
             <span>Google</span>
           </Button>
+
+          <button
+            type="button"
+            onClick={handleGuestSignIn}
+            disabled={loading}
+            className="w-full py-3 px-4 rounded-xl text-xs font-bold text-gray-500 hover:text-orange-600 hover:bg-orange-50 transition-all border border-dashed border-gray-300 dark:border-gray-700 active:scale-95 flex items-center justify-center gap-1.5"
+          >
+            <span>👤 Continue as Guest (விருந்தினராக தொடரவும்)</span>
+          </button>
         </Card>
       </motion.div>
     </div>

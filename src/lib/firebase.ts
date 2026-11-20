@@ -1,5 +1,15 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as firebaseSignOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { 
+  getAuth, 
+  GoogleAuthProvider, 
+  signInWithPopup, 
+  signOut as firebaseSignOut, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword,
+  setPersistence,
+  browserLocalPersistence,
+  signInAnonymously
+} from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 // Your web app's Firebase configuration
@@ -19,8 +29,20 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
+// Use local persistence to prevent cross-origin/partitioned sessionStorage issues
+try {
+  setPersistence(auth, browserLocalPersistence).catch((err) => {
+    console.warn("Could not set local persistence:", err);
+  });
+} catch (e) {
+  console.warn("Auth persistence error:", e);
+}
+
 // Auth Providers
 export const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({
+  prompt: 'select_account'
+});
 
 // Helper functions for Auth
 export const signInWithGoogle = async () => {
@@ -29,6 +51,16 @@ export const signInWithGoogle = async () => {
     return result.user;
   } catch (error) {
     console.error("Error signing in with Google", error);
+    throw error;
+  }
+};
+
+export const signInAsGuest = async () => {
+  try {
+    const result = await signInAnonymously(auth);
+    return result.user;
+  } catch (error) {
+    console.error("Error signing in anonymously", error);
     throw error;
   }
 };
