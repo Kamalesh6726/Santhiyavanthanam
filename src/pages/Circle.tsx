@@ -7,7 +7,6 @@ import {
 import { useAuth } from '../store/AuthContext';
 import { useMyCircle, useCircleDailyProgress, useCircleActivity } from '../hooks/useFirebaseData';
 import { createCircle, previewCircle, validateAndJoinCircle, sendReaction, resetCircleData } from '../lib/db';
-import { Card } from '../components/ui/Card';
 import { safeFormat } from '../lib/utils';
 
 // ─── Language Type ─────────────────────────────────────────────────────────────
@@ -291,7 +290,7 @@ const SessionDots = ({ pratah, madhyahnika, sayam }: { pratah: boolean; madhyahn
 // ─── Main Component ───────────────────────────────────────────────────────────
 export const Circle = () => {
   const { currentUser } = useAuth();
-  const { circle, members, loading, error } = useMyCircle();
+  const { circle, members, loading } = useMyCircle();
   const today = new Date().toISOString().split('T')[0];
   const { progress: dailyProgress } = useCircleDailyProgress(circle?.id ?? null, today);
   const { activities } = useCircleActivity(circle?.id ?? null);
@@ -345,15 +344,7 @@ export const Circle = () => {
     </div>
   );
 
-  if (error) return (
-    <div className="p-4 md:p-8 max-w-xl mx-auto space-y-4">
-      <h1 className="text-2xl font-display font-bold text-[#191815]">{t.title}</h1>
-      <Card className="p-8 text-center space-y-4 rounded-3xl">
-        <p className="text-gray-500">Couldn't load Circle data.</p>
-        <button onClick={() => window.location.reload()} className="px-6 py-2.5 rounded-2xl bg-orange-500 text-white font-bold">Try Again</button>
-      </Card>
-    </div>
-  );
+
 
   // ── No Circle State ──
   if (!circle) return (

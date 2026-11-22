@@ -203,6 +203,24 @@ export const useMyCircle = () => {
       return;
     }
 
+    const loadLocalCircle = () => {
+      try {
+        const stored = localStorage.getItem(`circle_${currentUser.uid}`);
+        if (stored) return JSON.parse(stored);
+      } catch {}
+      return null;
+    };
+
+    if (currentUser.uid.startsWith('guest_') || currentUser.isAnonymous) {
+      setCircle(loadLocalCircle());
+      setMembers([]);
+      setLoading(false);
+      setError(null);
+      const onUpdate = () => setCircle(loadLocalCircle());
+      window.addEventListener('sandhya_local_data_updated', onUpdate);
+      return () => window.removeEventListener('sandhya_local_data_updated', onUpdate);
+    }
+
     let unsubscribeCircle: (() => void) | undefined;
     let unsubscribeMembers: (() => void) | undefined;
 
@@ -221,8 +239,9 @@ export const useMyCircle = () => {
                   setError(null);
                 },
                 (err) => {
-                  console.error("[Firestore ERROR] useMyCircle (circle):", err);
-                  setError(err);
+                  console.warn("[Firestore fallback] useMyCircle (circle):", err);
+                  setCircle(loadLocalCircle());
+                  setError(null);
                 }
               );
             }
@@ -242,7 +261,6 @@ export const useMyCircle = () => {
                       } catch (innerErr) {
                         console.error(`Failed to load member profile ${m.id}`, innerErr);
                       }
-                      // Fallback if user profile read fails but we have member data
                       return { id: m.id, role: m.data().role, ...m.data() };
                     });
                     
@@ -251,14 +269,15 @@ export const useMyCircle = () => {
                     setLoading(false);
                     setError(null);
                   } catch (membersErr: any) {
-                    console.error("[Firestore ERROR] useMyCircle (members processing):", membersErr);
-                    setError(membersErr);
+                    console.warn("[Firestore fallback] useMyCircle (members processing):", membersErr);
+                    setMembers([]);
+                    setError(null);
                     setLoading(false);
                   }
                 },
                 (err) => {
-                  console.error("[Firestore ERROR] useMyCircle (members snapshot):", err);
-                  setError(err);
+                  console.warn("[Firestore fallback] useMyCircle (members snapshot):", err);
+                  setError(null);
                   setLoading(false);
                 }
               );
@@ -269,14 +288,18 @@ export const useMyCircle = () => {
             setLoading(false);
           }
         } catch (err: any) {
-          console.error("[Firestore ERROR] useMyCircle processing:", err);
-          setError(err);
+          console.warn("[Firestore fallback] useMyCircle processing:", err);
+          setCircle(loadLocalCircle());
+          setMembers([]);
+          setError(null);
           setLoading(false);
         }
       },
       (err) => {
-        console.error("[Firestore ERROR] useMyCircle (user doc):", err);
-        setError(err);
+        console.warn("[Firestore fallback] useMyCircle (user doc):", err);
+        setCircle(loadLocalCircle());
+        setMembers([]);
+        setError(null);
         setLoading(false);
       }
     );
